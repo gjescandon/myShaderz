@@ -67,16 +67,26 @@ float cubicPulse( float c, float w, float x )
 
 }
 
+float sinc( float x, float k )
+{
+    float a = PI*(k*x-1.0);
+    return sin(a)/a;
+}
 
 
 void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
 
-    vec2 p = 10.*st;
+    vec2 p = 20.*st;
+    p.x += cubicPulse( 10. + 5.*sin(0.3*u_time), 3., p.y );
+    p.y += cubicPulse( 10. + 5.*cos(0.3*u_time), 3., p.x );
+
     vec2 i_st = floor(p);
     vec2 f_st = fract(p);
-    vec3 c = vec3(i_st);
+    vec3 c = vec3(0.);
+    float width = 0.06;
 
+    c += vec3(cubicPulse( i_st.x, width, p.x )+cubicPulse( i_st.y, width, p.y ));
 
     gl_FragColor = vec4(c,1.0);
 

@@ -73,27 +73,24 @@ void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
 
     vec2 p = st;
-    p = 2.*p - 1.;
+    float N = 2.;
+    float scale = N*(2. + 1.*sin(0.3*u_time));
+    p = 10.*(p - 0.5);
 
     // p = 4.* p;
     float w = 0.01;
 
     vec2 origin = vec2(0.);
     float r0 = length(p - origin);
-    float theta = (PI + atan(p.y, p.x));// * (3 - abs(sin(0.3*u_time)));
+    float theta = 5.*(PI + atan(p.y, p.x));// * (3 - abs(sin(0.3*u_time)));
     vec3 c = vec3(0.);
-    float a = 0.6;
-    float N = 4. + floor(3 * sin(0.4*u_time));
-    //float b = ((0.05*sin(0.3*u_time))/a) - 0.005;
-    float r1 = 0.5 * theta / PI;// + (2 * theta / PI);
-    float r2 = 0.5 * (theta+2*PI) / PI;
-    float r3 = 0.5 * (theta+4*PI) / PI;
+
+
+    float r1 =  theta / (PI+TWO_PI);// + (2 * theta / PI);
+    float r2 = 0.09*pow(1.1,theta);// + (2 * theta / PI);
     // REPLACES smoothstep(c-w,c,y)-smoothstep(c,c+w,y)
-    float rscale = 0.3;
-    r1 *= rscale;
-    r2 *= rscale;
-    r3 *= rscale;
-    c = vec3(cubicPulse(r1,w,r0),cubicPulse(r2,w,r0),cubicPulse(r3,w,r0));
+ 
+    c = vec3(cubicPulse(r1,w,r0),0.,cubicPulse(r2,w,r0));
     //c+= vec3(cubicPulse(r1,w,r0))
 
 

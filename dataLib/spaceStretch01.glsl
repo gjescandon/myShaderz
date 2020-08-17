@@ -78,8 +78,14 @@ void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
 
     vec2 p = 20.*st;
-    p.x += cubicPulse( 10. + 5.*sin(0.3*u_time), 3., p.y );
-    p.y += cubicPulse( 10. + 5.*cos(0.3*u_time), 3., p.x );
+    p.y = 20.*st.y - 10.;
+    p.x = 20.*st.x - 10.;
+    
+    //p.x += cubicPulse( 10. + 5.*sin(0.3*u_time), 3., p.y );
+    //p.y += cubicPulse( 10. + 5.*cos(0.3*u_time), 3., p.x );
+    p.x += 0.1*p.x*sin( 0.05*p.y * PI - 0.5 * PI);
+    p.y += 0.1*p.y*sin( 0.05*p.x * PI - 0.5 * PI);
+    //p.y += cubicPulse( 10. , 3., p.x );
 
     vec2 i_st = floor(p);
     vec2 f_st = fract(p);

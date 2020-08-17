@@ -133,6 +133,13 @@ float cubicPulse( float c, float w, float x )
 
 }
 
+float gain(float x, float k) 
+{
+    float gainMid = 0.9;
+    float a = gainMid*pow(2.0*((x<gainMid)?x:1.0-x), k);
+    return (x<gainMid)?a:1.0-a;
+}
+
 float sinc( float x, float k )
 {
     float a = PI*(k*x-1.0);
@@ -198,18 +205,20 @@ void main() {
     float rMax = 0.3;
 
 
-    float ss = 0.5+0.5*sin(1.9 * u_time );
+    float ss = 0.5+0.5*sin(0.6 * u_time );
     float anim = 1. + 0.1*ss*clamp(1.-r,0.,1.);
     r *= anim;
 
 
     if (r < rMax){
         col = vec3(0., 0., 0.);
+        
         float f = fbm(10.*peye);  // black eye
         col = mix (col, vec3(0.0, 0.0, 0.4), f);
 
         f = 1-smoothstep(.25, .29, r); // yellow weird ring
         col = mix(col, vec3(0.7, 0.4, 0.0) , f);
+
         a += (0.2 + 0.05*sin(0.08*u_time)) * fbm(10.*p); // domain deform angle of rays
         float rOff = 0.1*(4. + 2.*sin(0.2*u_time));
         float aOff = 2. + (1. + 5.*sin(.2*u_time));
@@ -234,13 +243,67 @@ void main() {
         */
     }
 
+
+
+    // red mouth
+    vec2 pm = vec2(p.x, 1.3*p.y + 0.45);
+    //pm  += vec2(-.4+ 0.01*noise(p), -.3+ 0.01*noise(p));
+    // gain on x
+    float gain = 2.;
+    pm.x = 0.06*gain(pm.x, gain);
+    pm.y += 1.35*abs(pm.y)*sin(1.5*pm.x * PI + 0.5*PI);
+
+    float rm = length (pm) + 0.1*noise(pm)*(0.4+ 0.5*abs(sin(0.2*u_time)));
+    float am = atan(pm.y/pm.x);;
+    float rmMax = 0.17;
+
+
+    float rm_ss = 0.5+0.5*sin(1.9 * u_time );
+    float rm_anim = 1. + 0.1*rm_ss*clamp(1.-r,0.,1.);
+    rm *= rm_anim;
+
+
+    if (rm < rmMax){
+        col = vec3(0., 0., 0.);
+        
+        float f = fbm(10.*peye);  // red mouth
+        col = mix (vec3(0.1,0,0), vec3(0.4, 0.0, 0.2), f);
+
+        f = 1-smoothstep(.25, .29, rm); // yellow weird ring
+        //col = mix(col, vec3(0.7, 0.4, 0.0) , f);
+
+/*
+        a += (0.2 + 0.05*sin(0.08*u_time)) * fbm(10.*p); // domain deform angle of rays
+        float rOff = 0.1*(4. + 2.*sin(0.2*u_time));
+        float aOff = 2. + (1. + 5.*sin(.2*u_time));
+        f = smoothstep(0.2, 0.99, fbm(vec2(r*rOff, a*aOff)));
+        f = smoothstep(0.05, 1.0, fbm(vec2(r*rOff, a*aOff)));
+        f = smoothstep(0.05, 1.0, fbm(10.* rOff * peye));
+        
+        if (r < 0.9*rMax) {
+            col = mix(col,vec3(0.8), f);
+        }
+        //f = smoothstep(0.1, 0.6, fbm(vec2(rOff*r, 10.*a)));
+        //col *= 1- f ;
+
+        f = smoothstep(0.5, 0.8, r);
+        col *= 1.-0.5*f;
+
+        f = smoothstep(0.2, 0.3, r); // iris
+        col *= f;
+        
+        f = smoothstep(rMax-0.02, rMax,r);
+        col = mix(col,vec3(1.),f);
+        */
+    }
+
     // bottom teeth
     vec2 pt = 5.*vec2(p.x,p.y+0.6);    
     pt.x = p.x * 3.;
     pt.y += 0.2*pt.y*sin( 0.8*pt.x * PI + 0.5 * PI);
     float f = trishape(pt, 3);
     
-    float ft = noise(20.*pt);
+    float ft = 0.6*noise(80.*pt);
     vec3 cteeth1 = vec3(0.6, 0.4,0.2);
     vec3 cteeth2 = vec3(0.6, 0.1,0.1);
     vec3 cteeth = mix(cteeth1, cteeth2,ft);
@@ -250,7 +313,7 @@ void main() {
     pt2.y += 0.2*pt2.y*sin( 0.8*pt2.x * PI + 0.8 * PI);
     f = trishape(pt2, 3);
     
-    ft = noise(20.*pt2);
+    ft = 0.6*noise(20.*pt2);
     cteeth = mix(cteeth1, cteeth2, ft);
     col +=  f * cteeth;
     
@@ -260,7 +323,7 @@ void main() {
     ptups.y *= -1.;
     ptups.y += 0.1*ptups.y*sin( 0.8*ptups.x * PI - 0.5 * PI);
     f = trishape(ptups, 3);
-    ft = noise(20.*pt2);
+    ft = 0.6*noise(20.*pt2);
     cteeth = mix(cteeth1, cteeth2, ft);
     col +=  f * cteeth;
     
@@ -269,7 +332,7 @@ void main() {
     ptups2.y *= -1.;
     ptups2.y += 0.3*ptups2.y*sin( 0.6*ptups2.x * PI  - 0.18  * PI);
     f = trishape(ptups2, 3);
-    ft = noise(20.*pt2);
+    ft = 0.6*noise(20.*pt2);
     cteeth = mix(cteeth1, cteeth2, ft);
     col +=  f * cteeth;
     

@@ -21,19 +21,19 @@ vec2 renderDeformation( vec2 st ) {
     float a = atan( y, x );
 
     // magic formulas here
-    float offset = 0.01*u_time;
+    float offset = 0.06*u_time;
     float r = d + sin(offset);
-    float u = cos( a )/d;
-    float v = sin( a )/d;
+    float u = cos( a )/r;  // horizon infinity
+    float v = sin( a )/r;
 
-    //u = 0.1*x/(0.11+r*0.5);
+    //u = 0.1*x/(0.11+r*0.5); // horizon split
     //v = 0.1*y/(0.11+r*0.5);
 
-    //u = 0.02*y+0.03*cos(a*3)/r;
+    //u = 0.02*y+0.03*cos(a*3)/r; // yin yang pattern
     //v = 0.02*x+0.03*sin(a*3)/r;
 
-    u = 0.5*a/PI;
-    v = sin(7*r);
+    //u = 0.5*a/PI; // cirular bullseye pattern
+    //v = sin(3*r);
     return vec2(fract( u ),fract( v ));
 
 }

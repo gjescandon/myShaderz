@@ -103,7 +103,7 @@ void main() {
 
     vec3 color = vec3(.0);
 
-    float gridscale = 3.;
+    float gridscale = 9.;
     vec2 p = st * gridscale;
     //tile
     vec2 i_st = floor(p);
@@ -144,9 +144,9 @@ void main() {
 
     // Show isolines
     //color -= abs(sin(40.0*m_dist))*0.07;
-    color +=pow(m_dist,1.9);
+    //color +=pow(m_dist,1.9);
     // Draw point center
-    //color += 1.-step(.005, m_dist);
+    color += 1.-step(.005, m_dist);
 
     gl_FragColor = vec4(color,1.0);
 

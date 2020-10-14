@@ -63,6 +63,6 @@ void main() {
     float rr = random2(p);
     //r = 0.7*abs(sin(0.2*u_time)*sin(0.2*u_time))*rr*sin(r  - 0.6*u_time );
     r = pow(sin(r  - 0.09*u_time + 0.6* rr),2.);
-    vec3 color = vec3(0.,0.,fract((1.4 + 0.9*pow(cos(0.2*u_time),1.3))*(r)));
+    vec3 color = vec3(0.,fract((1.4 + 0.9*pow(cos(0.2*u_time),1.3))*(r)),0.5);
     gl_FragColor = vec4(color,1.0);
 }

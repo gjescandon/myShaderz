@@ -6,15 +6,17 @@ void setup() {
   size(1280, 720, P3D);
   noStroke();
   fill(204);
-  img = loadImage("seaShellFoam_mirror720.jpg");
-  toon = loadShader("sdRhombus.glsl");
-  //toon = loadShader("sdBox.glsl");
+  //img = loadImage("seaShellFoam_mirror720.jpg");
+  toon = loadShader("sdfMasks.glsl");
 }
 
 void draw() {
   toon.set("iResolution", float(width), float(height));
 //  toon.set("u_mouse", float(mouseX), float(mouseY));
-  toon.set("iTime", millis() / 1000.0);
+  float tmilli = millis() / 1000.0;
+  toon.set("iTime", tmilli);
+  //println(frameCount + " :: " + cos(0.2*tmilli));
+  
   
   shader(toon);
   rect(0,0,width,height);

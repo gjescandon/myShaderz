@@ -11,14 +11,23 @@ uniform float iTime;
 
 //uniform sampler2D texture;
 
-
-float sdBox(vec2 p, vec2 b) {
-  vec2 d = abs(p) -b;
-  return length(max(d,0.)) + min(max(d.x, d.y),0.);
+float expStep( float x, float k, float n )
+{
+    // n : power (positive > 1)
+    // k : cross over 1/x
+    return exp( -k*pow(x,n) );
 }
+
+
 
 float ndot( vec2 a, vec2 b) {
     return (a.x*b.x - a.y*b.y);
+}
+
+float sdBox( in vec2 p, in vec2 b )
+{
+    vec2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
 }
 
 float sdCircle( vec2 p, float r )
@@ -35,12 +44,23 @@ float sdRhombus( vec2 p, vec2 b) {
 }
 
 
+
+
 void main( void )
 {
     
     vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-    vec2 ra = 0.4 + 0.3*cos(iTime + vec2(0.0,1.57) + 0.0);
-    float d = sdRhombus(p, ra);
+    float it = 0.5 * iTime;
+    p.x += 0.8 * cos(0.5* it + 0.0);
+    
+    float power = 2.;
+    float step = 1.;// + 5. * abs(sin(0.3*u_time));
+    p.y -= expStep( p.x, step, power );    
+    
+    float ySide = 0.4 + 0.3*cos(it + 0.0);
+    float xSide = 1/ySide;
+    vec2 ra = vec2(0.1, ySide);
+    float d = sdBox(p, ra);
     vec3 col = vec3(1.0) - sign(d)*vec3(0.1,0.4,0.7);
     // col -= vec3(d); // solo this for burning retina thing
     col *= 1.0 - exp(-2.0*abs(d));

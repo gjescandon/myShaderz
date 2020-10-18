@@ -10,7 +10,7 @@ void setup() {
   //toon = loadShader("bos_07-distance.glsl");
   //toon = loadShader("bos_noise.glsl");
   //toon = loadShader("bos_noiseLines.glsl");
-  //toon = loadShader("bos_noiseRadial.glsl");
+  toon = loadShader("bos_noiseRadial.glsl");
   //toon = loadShader("bos_patterns.glsl");
   //toon = loadShader("bos_patternsEvenOdd.glsl");
   //toon = loadShader("bos_random.glsl");
@@ -30,7 +30,7 @@ void setup() {
   //toon = loadShader("mixHSBpolar.glsl");
   //toon = loadShader("quilezEquations.glsl");
   //toon = loadShader("spaceStretch01.glsl");
-  toon = loadShader("texture.glsl");
+  //toon = loadShader("texture.glsl");
   //toon.set("fraction", 1.0);
 }
 

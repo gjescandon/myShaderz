@@ -6,3 +6,8 @@ find . -name "*.tif" -print0 | xargs -0 rm
 
 move files:
 find . -iname "*.tif"  | xargs -I {}  mv {} ~/akWorkOSX/processingTiffs 
+
+
+create mp4 from processingTiffs
+
+ffmpeg -r 60 -f image2 -s 1280X720 -i screen-%04d.tif -vcodec libx264 -crf 25  -pix_fmt yuv420p test.mp4

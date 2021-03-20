@@ -3,11 +3,16 @@ PShader toon;
 // https://www.iquilezles.org/www/articles/deform/deform.htm
 PImage img;
 void setup() {
-  size(720, 720, P3D);
+  size(1280, 720, P3D);
   noStroke();
   fill(204);
-  img = loadImage("seaShellFoam_mirror720.jpg");
-  toon = loadShader("texture_frag.glsl");
+  //img = loadImage("seaShellFoam_mirror720.jpg");
+  //img = loadImage("gselfieOil.JPG");
+  //img = loadImage("face16.jpg");
+  img = loadImage("Teahupoo.jpg");
+  
+  //toon = loadShader("texture_frag.glsl");
+  toon = loadShader("two_tweets.glsl");
 }
 
 void draw() {

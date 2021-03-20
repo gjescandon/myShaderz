@@ -3,7 +3,7 @@ PShader toon;
 // https://thebookofshaders.com/07/
 
 void setup() {
-  size(720, 720, P3D);
+  size(1280, 720, P3D);
   noStroke();
   fill(204);
   toon = loadShader("quilezEyeball.glsl");

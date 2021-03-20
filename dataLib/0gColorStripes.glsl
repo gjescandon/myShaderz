@@ -75,9 +75,9 @@ float noiseValue( in vec2 p )
    // **** RGB in here **** 
   float a1 = 0.2; // 
 
-  float b1 = 0.4; //oscilators amplitude
+  float b1 = 0.2; //oscilators amplitude
 
-  float c1 = 1.0; //input amplitude
+  float c1 = 1.5 * (1 + 0.5* sin(0.01*iTime)); //input amplitude
 
   float d1 = 0.; // offset
 
@@ -86,7 +86,7 @@ float noiseValue( in vec2 p )
   float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
   b1 = iRandom1;
-  c1 = iRandom2;
+  //c1 = iRandom2;
   d1 = iRandom3;
 
   float h1 = factor * (a1 + b1 * cos(TWO_PI*(c1*tnom+d1)));
@@ -166,11 +166,19 @@ float sdEllipse( in vec2 p, in vec2 ab )
 void main( void )
 {
     
-    float bobSin = sin(0.07*iTime);
+    vec2 p = vec2(1.);
+    //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
+    p = gl_FragCoord.xy/iResolution.xy;
+
+    float bobSin = sin(0.04*iTime);
     float bobTim = 0.07*iTime;
-    vec2 p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
+
+
     float bob = 0.01*random(p);
-    vec3 col = vec3( getColor1D(p.x + 0.5*noize3(p.y + bob - bobTim) + 0.3*bobSin), getColor1D(p.x + 0.5*noize3(p.y +bob - bobTim)  + 0.42* bobSin), getColor1D(p.x + 0.5*noize3(p.y + bob - bobTim) + 0.56*bobSin));
+    float cgrn= p.x + 0.3*noize3(p.y +bob - bobTim) + 0.36*bobSin;
+    float cblu = p.x + noize3(p.y + bob - bobTim) + 0.56*bobSin;
+    float cred= p.x + 0.5*noize3(p.y + bob - bobTim) ;
+    vec3 col = vec3( getColor1D(cred), getColor1D(cgrn), getColor1D(cblu));
 
 
     

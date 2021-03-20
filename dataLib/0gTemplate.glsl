@@ -11,6 +11,9 @@ precision mediump float;
 uniform vec2 iResolution;
 //uniform vec2 u_mouse;
 uniform float iTime;
+uniform float iRandom1;
+uniform float iRandom2;
+uniform float iRandom3;
 
 //uniform sampler2D texture;
 
@@ -66,13 +69,14 @@ float noiseValue( in vec2 p )
 
   
  
+ 
  float getColor1D(float t0) {
    // **** RGB in here **** 
-  float a1 = 0.6; // red
+  float a1 = 0.2; // 
 
-  float b1 = 0.4; //oscilators amplitude
+  float b1 = 0.2; //oscilators amplitude
 
-  float c1 = 1.0; //input amplitude
+  float c1 = 1.5 * (1 + 0.5* sin(0.01*iTime)); //input amplitude
 
   float d1 = 0.; // offset
 
@@ -80,16 +84,20 @@ float noiseValue( in vec2 p )
 
   float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
+  b1 = iRandom1;
+  //c1 = iRandom2;
+  d1 = iRandom3;
+
   float h1 = factor * (a1 + b1 * cos(TWO_PI*(c1*tnom+d1)));
-  return h1;   
+  return h1; //fract(h1);   
  }
 
-  vec4 getColor(float t0) {
+  vec3 getColor(float t0) {
    // **** RGB in here **** 
   float a1 = 0.6; // red
   float a2 = 0.5;  // green
   float a3 = 0.7;  // blue
-
+  
   float b1 = 0.4; //oscilators amplitude
   float b2 = 0.5;
   float b3 = 0.1;
@@ -105,14 +113,17 @@ float noiseValue( in vec2 p )
 
   float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
-  vec4 c;
+  d1 = iRandom1;
+  d2 = iRandom2;
+  d3 = iRandom3;
+  
   float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
-  float hue1 = factor * (a1 + b1f);
+  float red1 = fract(factor * (a1 + b1f));
   float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
-  float sat2 = factor * (a2 + b2f);
+  float grn2 = fract(factor * (a2 + b2f));
   float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
-  float bril3 = factor * (a3 + b3f);
-  c = vec4(hue1,sat2,bril3, 1.);
+  float blu3 = fract(factor * (a3 + b3f));
+  vec3 c = vec3(red1,grn2,blu3);
   return c;   
  }
 

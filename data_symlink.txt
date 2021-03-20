@@ -1,6 +1,5 @@
 mklink /D data X:\0GeoffData\bookOfShadersEx\data
 
-github: 979f3d0eb263f72907871c29494e25b0cd9a225e
 
 
 delete files:

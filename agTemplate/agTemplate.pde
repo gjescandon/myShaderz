@@ -8,7 +8,9 @@ void setup() {
   noStroke();
   fill(204);
   //img = loadImage("seaShellFoam_mirror720.jpg");
-  toon = loadShader("0gColorStripes.glsl");
+  //toon = loadShader("0gColorStripes.glsl");
+  toon = loadShader("bullsEye.glsl");
+  //toon = loadShader("0gTemplate.glsl");
   rr1 = random(1);
   rr2 = random(1);
   rr3 = random(1);

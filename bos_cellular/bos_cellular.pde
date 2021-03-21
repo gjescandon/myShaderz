@@ -8,8 +8,8 @@ void setup() {
   fill(204);
   //toon = loadShader("bos_cellular.glsl");
   //toon = loadShader("bos_cellularVeronoi.glsl");
-  //toon = loadShader("stippling.glsl");
-  toon = loadShader("cell.glsl");
+  toon = loadShader("stippling.glsl");
+  //toon = loadShader("cell.glsl");
   //toon = loadShader("cracks.frag");
   //toon = loadShader("bos_cellularQuilezPolar.glsl");
 //  toon = loadShader("bos_cellularQuilezVeronoi.glsl");

@@ -296,5 +296,5 @@ void main( void )
     //col *= 1.0 - exp(-2.0*abs(d));
     //col *= 0.8 + 0.4*cos(60.0*d);
     //col = mix(col, vec3(1.0), 1.0-smoothstep(0.0, 0.02, abs(d - 0.1)));
-    gl_FragColor = vec4(col.x * getColor1D(0.2*iTime),col.y * getColor1D(0.4*iTime),col.z * getColor1D(0.1*iTime), 1.0);
+    gl_FragColor = vec4(col * getColor(0.01*iTime), 1.0);
 }

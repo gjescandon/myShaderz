@@ -183,9 +183,11 @@ void main( void )
     float xoff = p.x;// + 0.1*random(p);
     float yoff = p.y;// + 0.1*random(p);
     float rad = fract(xoff * xoff + yoff * yoff) + 0.2*random(p)*(1.5-sin(0.01*iTime));
-    vec3 col = vec3(getColor(rad  - 0.006*iTime));
+    rad -= 0.006*iTime;
 
+    vec3 col = vec3(getColor(rad));
 
+    col = vec3(getColor(fract(p.y + 0.2*random(p))));
     
     gl_FragColor = vec4(col, 1.0);
 }

@@ -99,9 +99,9 @@ float noiseValue( in vec2 p )
   float a2 = 0.5;  // green
   float a3 = 0.7;  // blue
   
-  float b1 = 0.4; //oscilators amplitude
+  float b1 = 0.3; //oscilators amplitude
   float b2 = 0.2;
-  float b3 = 0.5;
+  float b3 = 0.1;
 
   float c1 = 1.0; //input amplitude
   float c2 = 1.0;
@@ -208,23 +208,36 @@ void main( void )
 	vec2 vB1 = cos( 0.1 *iTime + vec2(0.0,4.00) + 0.3 );
 	vec2 vB2 = cos( 0.1 *iTime + vec2(0.0,3.0) + 1.8 );
 	vec2 vB3 = cos( 0.1 *iTime + vec2(0.0,6.00) + 4.3 );
+	vec2 vC1 = cos( 0.1 *iTime + vec2(0.0,6.00) + 0.6 );
+	vec2 vC2 = cos( 0.1 *iTime + vec2(0.0,5.0) + 1.1 );
+	vec2 vC3 = cos( 0.1 *iTime + vec2(0.0,8.00) + 4.6 );
 
 	float dA = sdTriangle( p, vA1, vA2, vA3 );
 	float dB = sdTriangle( p, vB1, vB2, vB3 );
+	float dC = sdTriangle( p, vC1, vC2, vC3 );
 
   vec3 colA = vec3(1.0) - sign(dA)*vec3(1.);
 	//col *= 1.0 - exp(-2.0*abs(d)); // interior color
 	//col *= 0.8 + 0.2*cos(120.0*d);  // gradient lines
   colA = mix( colA, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dA)) );  // shape boundary
-  colA *= vec3(0.2,0.3,0.5);
+  
+  //colA *= getColor(0.01*iTime);
+  
   vec3 colB = vec3(1.0) - sign(dB)*vec3(1.);
 	//col *= 1.0 - exp(-2.0*abs(d)); // interior color
 	//col *= 0.8 + 0.2*cos(120.0*d);  // gradient lines
   colB = mix( colB, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dB)) );  // shape boundary
-  colB *= vec3(0.5, 0.4, 0.2);
 
-  vec3 col = colA + colB - colA*colB;
-	//fragColor = vec4(col,1.0);  // shaderToy
+  vec3 colC = vec3(1.0) - sign(dC)*vec3(1.);
+	//col *= 1.0 - exp(-2.0*abs(d)); // interior color
+	//col *= 0.8 + 0.2*cos(120.0*d);  // gradient lines
+  colC = mix( colC, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dC)) );  // shape boundary
+
+  //colB *= getColor(0.01*iTime + 0.5);
+  
+  vec3 col = colA*getColor(0.01*iTime) + colB*getColor(0.01*iTime + 0.3)  + colC*getColor(0.01*iTime + 0.6) - colA*colB - colA*colC - colB*colC;
+  
+  //fragColor = vec4(col,1.0);  // shaderToy
     
     gl_FragColor = vec4(col, 1.0);
 }

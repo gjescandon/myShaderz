@@ -15,8 +15,10 @@ uniform float iTime;
 uniform float iRandom1;
 uniform float iRandom2;
 uniform float iRandom3;
+uniform float[100] iRarr;
+//uniform int jdoCnt;
 
-
+  
 //uniform sampler2D texture;
 
 float random (vec2 st) {
@@ -133,6 +135,18 @@ float noiseValue( in vec2 p )
   return c;   
  }
 
+
+float sdBox( in vec2 p, in vec2 b )
+{
+    vec2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
+
+float sdCircle( vec2 p, float r )
+{
+    return length(p) - r;
+}
+
 float sdEllipse( in vec2 p, in vec2 ab )
 {
     p = abs(p); if( p.x > p.y ) {p=p.yx;ab=ab.yx;}
@@ -178,6 +192,7 @@ float sdEquilateralTriangle( in vec2 p )
     return -length(p)*sign(p.y);
 }
 
+
 float sdTriangle( in vec2 p, in vec2 p0, in vec2 p1, in vec2 p2 )
 {
     vec2 e0 = p1-p0, e1 = p2-p1, e2 = p0-p2;
@@ -199,45 +214,115 @@ void main( void )
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     //p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
 
-  p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-	p *= 1.5;
+  p = (2.0*gl_FragCoord.xy-0.9*iResolution.xy)/iResolution;
+	//p = (2.0*gl_FragCoord.xy)/iResolution.y;
+	//p *= 1.5;
+  
+  vec3 colArr[13];
+  float  jdoArr[13];
+  for (int i = 0; i < colArr.length(); i++) {
+    colArr[i] = vec3(0.);
+    jdoArr[i] = 1.;
+  }    
+
+  int jdoCnt = 0;
+  jdoArr[0] = 0.8;
+  vec3 col = vec3(0.);
+  float dt;
+  float dtx = 0.;
+  float a = 0.;
+  float b = 0.;
+  float c = 0.;
+  float d = 0.;
+  float e = 0.;
+  float f = 0.;
+
+  for (int i = 0 ; i < iRarr.length(); i++) {
+    float ii = iRarr[i];
+    if (ii == 1.) { //square
+       a = iRarr[i+1]/iResolution.x;
+       b = iRarr[i+2]/iResolution.y;
+       c = iRarr[i+3]/iResolution.x;
+       d = iRarr[i+4]/iResolution.y;
+       dt = sdBox( p - vec2(a,b), vec2(c,d));
+      jdoArr[jdoCnt] = dt;
+  
+      jdoCnt++;
+    }
     
-	vec2 vA1 = cos( 0.1 *iTime + vec2(0.0,2.00) + 0.0 );
-	vec2 vA2 = cos( 0.1 *iTime + vec2(0.0,1.50) + 1.5 );
-	vec2 vA3 = cos( 0.1 *iTime + vec2(0.0,3.00) + 4.0 );
-	vec2 vB1 = cos( 0.1 *iTime + vec2(0.0,4.00) + 0.3 );
-	vec2 vB2 = cos( 0.1 *iTime + vec2(0.0,3.0) + 1.8 );
-	vec2 vB3 = cos( 0.1 *iTime + vec2(0.0,6.00) + 4.3 );
-	vec2 vC1 = cos( 0.1 *iTime + vec2(0.0,6.00) + 0.6 );
-	vec2 vC2 = cos( 0.1 *iTime + vec2(0.0,5.0) + 1.1 );
-	vec2 vC3 = cos( 0.1 *iTime + vec2(0.0,8.00) + 4.6 );
-
-	float dA = sdTriangle( p, vA1, vA2, vA3 );
-	float dB = sdTriangle( p, vB1, vB2, vB3 );
-	float dC = sdTriangle( p, vC1, vC2, vC3 );
-
-  vec3 colA = vec3(1.0) - sign(dA)*vec3(1.);
-	//col *= 1.0 - exp(-2.0*abs(d)); // interior color
-	//col *= 0.8 + 0.2*cos(120.0*d);  // gradient lines
-  colA = mix( colA, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dA)) );  // shape boundary
+    if (iRarr[i] == 2.) { //triangle
+       a = iRarr[i+1]/iResolution.x;
+       b = iRarr[i+2]/iResolution.y;
+       c = iRarr[i+3]/iResolution.x;
+       d = iRarr[i+4]/iResolution.y;
+       e = iRarr[i+5]/iResolution.x;
+       f = iRarr[i+6]/iResolution.y;
   
-  //colA *= getColor(0.01*iTime);
+      float dt = sdTriangle(p, vec2(a,b), vec2(c,d), vec2(e,f));
+      jdoArr[jdoCnt] = dt;
+      dtx = dt;
   
-  vec3 colB = vec3(1.0) - sign(dB)*vec3(1.);
-	//col *= 1.0 - exp(-2.0*abs(d)); // interior color
-	//col *= 0.8 + 0.2*cos(120.0*d);  // gradient lines
-  colB = mix( colB, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dB)) );  // shape boundary
+      jdoCnt++;
+    }
+    if (iRarr[i] == 3.) { //circle
+       a = iRarr[i+1]/iResolution.x;
+       b = iRarr[i+2]/iResolution.y;
+       c = iRarr[i+3]/iResolution.y;
+      float dt = sdCircle( p , c );
+      dt = sdCircle( p - vec2(-0.5*a,b), c);
+      jdoArr[jdoCnt] = dt;
+      //dtx = dt;
+  
+      jdoCnt++;
+    }
 
-  vec3 colC = vec3(1.0) - sign(dC)*vec3(1.);
-	//col *= 1.0 - exp(-2.0*abs(d)); // interior color
-	//col *= 0.8 + 0.2*cos(120.0*d);  // gradient lines
-  colC = mix( colC, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dC)) );  // shape boundary
+  }
 
-  //colB *= getColor(0.01*iTime + 0.5);
+
+  for (int i = 0 ; i < jdoArr.length(); i++) {
+    colArr[i] = vec3(1.0) - sign(jdoArr[i])*vec3(1.);
+	  if (iRandom3 > 0.5) colArr[i] *= 1.0 - exp(-2.0*abs(jdoArr[i])); // interior color
+	  //colArr[i] *= 0.8 + 0.2*cos(120.0*jdoArr[i]);  // gradient lines
+    colArr[i] = mix( colArr[i], vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(jdoArr[i])) );  // shape boundary
+    }
+
+  for (int i = 0 ; i < colArr.length(); i++) {
+  //for (int i = 0 ; i < 5; i++) {
+    for (int j = i; j >0; j--) {
+      col -= colArr[i]*colArr[j] * getColor(iRandom1 + (i-j) * 0.6);
+    }
+    col += colArr[i] * getColor(iRandom1 + i * 0.6 + 0.1*iTime);
+  }
+   
+
+    //col = vec3(1.0) - sign(dtx)*vec3(1.);
+	  //col *= 1.0 - exp(-2.0*abs(dtx)); // interior color
+	  //col *= 0.8 + 0.2*cos(120.0*dtx);  // gradient lines
+    //col = mix( col, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dtx)) );  // shape boundary
+ 
+  //col += colArr[1]*getColor(0.01*iTime + 1.*0.2);
+  //col = vec3(1.0) *p.x*getColor((dt));
+
+  /* **** MAKE INTERSECTIONS SEE-THRU BY *EXCLUDING* FROM LINE BELOW *** */
+  //col -= 0.5*colA*colB + 0.5*colA*colC + 0.5 *colB*colC; // darken intersections
   
-  vec3 col = colA*getColor(0.01*iTime) + colB*getColor(0.01*iTime + 0.3)  + colC*getColor(0.01*iTime + 0.6) - colA*colB - colA*colC - colB*colC;
-  
+
+  /* ALT INTERSECTION COLOR */
+  //col += colA*colB*getColor(0.01*iTime + 0.6) + colA*colC*getColor(0.01*iTime + 0.8);// + colB*colC*getColor(0.01*iTime + 0.1);
   //fragColor = vec4(col,1.0);  // shaderToy
     
+	vec2 v1 = cos( iTime + vec2(0.0,2.00) + 0.0 );
+	vec2 v2 = cos( iTime + vec2(0.0,1.50) + 1.5 );
+	vec2 v3 = cos( iTime + vec2(0.0,3.00) + 4.0 );
+
+	float dd = sdTriangle( p, v1, v2, v3 );
+  dd = sdBox(p - v1, v3);
+	
+  dd = sdCircle(p, 0.8);
+  //col = vec3(1.0) - sign(dd)*vec3(1.);
+  //col *= 1.0 - exp(-3.0*abs(dd));
+	//col *= 0.8 + 0.2*cos(120.0*dd);
+	//col += mix( col, vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(dd)) );
     gl_FragColor = vec4(col, 1.0);
+
 }

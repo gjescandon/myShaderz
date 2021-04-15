@@ -101,13 +101,14 @@ float noiseValue( in vec2 p )
   float a2 = 0.5;  // green
   float a3 = 0.7;  // blue
   
-  float b1 = 0.3; //oscilators amplitude
+  float b1 = 0.4; //oscilators amplitude
   float b2 = 0.2;
-  float b3 = 0.1;
+  float b3 = 0.5;
 
-  float c1 = 1.0; //input amplitude
-  float c2 = 1.0;
-  float c3 = 1.0;
+  float c1 = 1 + floor(10*iRandom1); // sin rate
+  float c2 = 1 + floor(10*iRandom1);
+  float c3 = 1 + floor(10*iRandom1);
+  
 
   float d1 = 0.; // offset
   float d2 = 0.3;
@@ -116,24 +117,29 @@ float noiseValue( in vec2 p )
 
   float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
-  a1 = iRandom1;
-  a2 = 0.1 * iRandom2;
-  a3 = iRandom3;
+  a1 = fract(10*iRandom1);
+  a2 = fract(10*iRandom2);
+  a3 = fract(10*iRandom3);
 
-  d1 = iRandom1;
-  d2 = iRandom2;
-  d3 = iRandom3;
+  b1 = fract(100*iRandom1);
+  b2 = fract(100*iRandom2);
+  b3 = fract(100*iRandom3);
+
+  d1 = fract(1000*iRandom1);
+  d2 = fract(1000*iRandom2);
+  d3 = fract(1000*iRandom3);
 
   
-  float b1f = b1 * cos(TWO_PI*(factor * c1*tnom+d1));
-  float red1 = fract((a1 + b1f));
-  float b2f = b2 * cos(TWO_PI*(factor * c2*tnom+d2));
-  float grn2 = fract((a2 + b2f));
-  float b3f = + b3 * cos(TWO_PI*(factor * c3*tnom+d3));
-  float blu3 = fract((a3 + b3f));
+  float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
+  float red1 = clamp(factor * (a1 + b1f),0.,1.);
+  float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
+  float grn2 = clamp(factor * (a2 + b2f),0.,1.);
+  float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
+  float blu3 = clamp(factor * (a3 + b3f),0.,1.);
   vec3 c = vec3(red1,grn2,blu3);
   return c;   
  }
+
 
 
 float sdBox( in vec2 p, in vec2 b )
@@ -214,8 +220,9 @@ void main( void )
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     //p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
 
-  p = (2.0*gl_FragCoord.xy-0.9*iResolution.xy)/iResolution;
+  p = (2.0*gl_FragCoord.xy-0.9*iResolution.xy)/iResolution.y;
 	//p = (2.0*gl_FragCoord.xy)/iResolution.y;
+	//p = gl_FragCoord.xy)/iResolution;
 	//p *= 1.5;
   
   vec3 colArr[13];
@@ -244,6 +251,10 @@ void main( void )
        b = iRarr[i+2]/iResolution.y;
        c = iRarr[i+3]/iResolution.x;
        d = iRarr[i+4]/iResolution.y;
+       //a = iRarr[i+1];
+       //b = iRarr[i+2];
+       //c = iRarr[i+3];
+       //d = iRarr[i+4];
        dt = sdBox( p - vec2(a,b), vec2(c,d));
       jdoArr[jdoCnt] = dt;
   
@@ -281,7 +292,7 @@ void main( void )
 
   for (int i = 0 ; i < jdoArr.length(); i++) {
     colArr[i] = vec3(1.0) - sign(jdoArr[i])*vec3(1.);
-	  if (iRandom3 > 0.5) colArr[i] *= 1.0 - exp(-2.0*abs(jdoArr[i])); // interior color
+	  colArr[i] *= 1.0 - abs(sin(0.01*iTime + i * PI / jdoArr.length()))*exp(-2.0*abs(jdoArr[i])); // interior color
 	  //colArr[i] *= 0.8 + 0.2*cos(120.0*jdoArr[i]);  // gradient lines
     colArr[i] = mix( colArr[i], vec3(1.0), 1.0-smoothstep(0.0,0.02,abs(jdoArr[i])) );  // shape boundary
     }
@@ -291,7 +302,7 @@ void main( void )
     for (int j = i; j >0; j--) {
       col -= colArr[i]*colArr[j] * getColor(iRandom1 + (i-j) * 0.6);
     }
-    col += colArr[i] * getColor(iRandom1 + i * 0.6 + 0.1*iTime);
+    col += colArr[i] * getColor(iRandom1 + i * 0.6 + 0.01*iTime);
   }
    
 

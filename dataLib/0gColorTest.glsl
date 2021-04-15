@@ -103,6 +103,50 @@ float noiseValue( in vec2 p )
   float b2 = 0.2;
   float b3 = 0.5;
 
+  float c1 = 1 + floor(10*iRandom1); // sin rate
+  float c2 = 1 + floor(10*iRandom1);
+  float c3 = 1 + floor(10*iRandom1);
+  
+
+  float d1 = 0.; // offset
+  float d2 = 0.3;
+  float d3 = 0.6;
+  float factor = 1.0;
+
+  float tnom = t0-floor(t0);   // between 0.0 and 1.0
+
+  a1 = fract(10*iRandom1);
+  a2 = fract(10*iRandom2);
+  a3 = fract(10*iRandom3);
+
+  b1 = fract(100*iRandom1);
+  b2 = fract(100*iRandom2);
+  b3 = fract(100*iRandom3);
+
+  d1 = fract(1000*iRandom1);
+  d2 = fract(1000*iRandom2);
+  d3 = fract(1000*iRandom3);
+
+  
+  float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
+  float red1 = clamp(factor * (a1 + b1f),0.,1.);
+  float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
+  float grn2 = clamp(factor * (a2 + b2f),0.,1.);
+  float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
+  float blu3 = clamp(factor * (a3 + b3f),0.,1.);
+  vec3 c = vec3(red1,grn2,blu3);
+  return c;   
+ }
+  vec3 getColorStep(float t0) {
+   // **** RGB in here **** 
+  float a1 = 0.6; // red
+  float a2 = 0.5;  // green
+  float a3 = 0.7;  // blue
+  
+  float b1 = 0.4; //oscilators amplitude
+  float b2 = 0.2;
+  float b3 = 0.5;
+
   float c1 = 1.0; //input amplitude
   float c2 = 1.0;
   float c3 = 1.0;
@@ -114,13 +158,17 @@ float noiseValue( in vec2 p )
 
   float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
-  a1 = iRandom1;
-  a2 = 0.1 * iRandom2;
-  a3 = iRandom3;
+  a1 = fract(10*iRandom1);
+  a2 = fract(10*iRandom2);
+  a3 = fract(10*iRandom3);
 
-  d1 = iRandom1;
-  d2 = iRandom2;
-  d3 = iRandom3;
+  b1 = fract(100*iRandom1);
+  b2 = fract(100*iRandom2);
+  b3 = fract(100*iRandom3);
+
+  d1 = fract(1000*iRandom1);
+  d2 = fract(1000*iRandom2);
+  d3 = fract(1000*iRandom3);
 
   
   float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
@@ -129,6 +177,94 @@ float noiseValue( in vec2 p )
   float grn2 = fract(factor * (a2 + b2f));
   float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
   float blu3 = fract(factor * (a3 + b3f));
+  vec3 c = vec3(red1,grn2,blu3);
+  return c;   
+ }
+
+vec3 getColorFast(float t0) {
+   // **** RGB in here **** 
+  float a1 = 0.6; // red
+  float a2 = 0.5;  // green
+  float a3 = 0.7;  // blue
+  
+  float b1 = 0.4; //oscilators amplitude
+  float b2 = 0.2;
+  float b3 = 0.5;
+
+  float c1 = 1.+floor(10*iRandom1); //input amplitude
+  float c2 = 1.+floor(10*iRandom2);
+  float c3 = 1.+floor(10*iRandom3);
+
+  float d1 = 0.; // offset
+  float d2 = 0.3;
+  float d3 = 0.6;
+  float factor = 1.0;
+
+  float tnom = t0-floor(t0);   // between 0.0 and 1.0
+
+  a1 = fract(10*iRandom1);
+  a2 = fract(10*iRandom2);
+  a3 = fract(10*iRandom3);
+
+  b1 = fract(100*iRandom1);
+  b2 = fract(100*iRandom2);
+  b3 = fract(100*iRandom3);
+
+  d1 = fract(1000*iRandom1);
+  d2 = fract(1000*iRandom2);
+  d3 = fract(1000*iRandom3);
+
+  
+  float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
+  float red1 = clamp(factor * (a1 + b1f),0.,1.);
+  float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
+  float grn2 = clamp(factor * (a2 + b2f),0.,1.);
+  float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
+  float blu3 = clamp(factor * (a3 + b3f),0.,1.);
+  vec3 c = vec3(red1,grn2,blu3);
+  return c;   
+ }
+
+vec3 getColorSlow(float t0) {
+   // **** RGB in here **** 
+  float a1 = 0.6; // red
+  float a2 = 0.5;  // green
+  float a3 = 0.7;  // blue
+  
+  float b1 = 0.4; //oscilators amplitude
+  float b2 = 0.2;
+  float b3 = 0.5;
+
+  float c1 = 1.; //input amplitude
+  float c2 = 1.;
+  float c3 = 1.;
+
+  float d1 = 0.; // offset
+  float d2 = 0.3;
+  float d3 = 0.6;
+  float factor = 1.0;
+
+  float tnom = t0-floor(t0);   // between 0.0 and 1.0
+
+  a1 = fract(10*iRandom1);
+  a2 = fract(10*iRandom2);
+  a3 = fract(10*iRandom3);
+
+  b1 = fract(100*iRandom1);
+  b2 = fract(100*iRandom2);
+  b3 = fract(100*iRandom3);
+
+  d1 = fract(1000*iRandom1);
+  d2 = fract(1000*iRandom2);
+  d3 = fract(1000*iRandom3);
+
+  
+  float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
+  float red1 = clamp(factor * (a1 + b1f),0.,0.99);
+  float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
+  float grn2 = clamp(factor * (a2 + b2f),0.,0.99);
+  float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
+  float blu3 = clamp(factor * (a3 + b3f),0.,0.99);
   vec3 c = vec3(red1,grn2,blu3);
   return c;   
  }
@@ -173,7 +309,7 @@ void main( void )
     
     vec2 p = vec2(1.);
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-    p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
+    p = gl_FragCoord.xy/iResolution.xy;
 
     float bobSin = sin(0.04*iTime);
     float bobTim = 0.007*iTime;
@@ -185,10 +321,10 @@ void main( void )
     float rad = fract(xoff * xoff + yoff * yoff) + 0.2*random(p)*(1.5-sin(0.01*iTime));
     rad -= 0.006*iTime;
 
-    vec3 col = vec3(getColor(x));
-    if (y > 0.25) col = vec(getColor(iRandom1 + x));
-    if (y > 0.5) col = vec(getColor(iRandom2 + x));
-    if (y > 0.75) col = vec(getColor(iRandom3 + x));
+    vec3 col = vec3(getColor(p.x));
+    if (p.y > 0.25) col = vec3(getColorStep(iRandom1 + p.x));
+    if (p.y > 0.5) col = vec3(getColorSlow(iRandom2 + p.x));
+    if (p.y > 0.75) col = vec3(getColorFast(iRandom3 + p.x));
     //col = vec3(getColor(fract(p.y + 0.2*random(p))));
     
     gl_FragColor = vec4(col, 1.0);

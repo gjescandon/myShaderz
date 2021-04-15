@@ -5,13 +5,14 @@ PImage img;
 float[] rarr;
 
 void setup() {
-  size(1280, 720, P3D);
+  size(720, 720, P3D);
   noStroke();
   fill(204);
   //img = loadImage("seaShellFoam_mirror720.jpg");
   //toon = loadShader("0gColorStripes.glsl");
   //toon = loadShader("0gQuilezJenDo.glsl");
-  toon = loadShader("0gUniformArrays.glsl");
+  //toon = loadShader("0gUniformArrays.glsl");
+  toon = loadShader("0gColorTest.glsl");
   
   //toon = loadShader("bullsEye.glsl");
   //toon = loadShader("0gTemplate.glsl");
@@ -37,6 +38,7 @@ void draw() {
   
   
   shader(toon);
+  if (frameCount%100 ==0) rect(0,0,random(width), random(height));
   rect(0,0,width,height);
   //image(img,0,0);
   //saveFrame();

@@ -5,7 +5,7 @@ class JdUnit {
  Jdo[] jdo;
  float[] swArr;
  
- int jdoSize = 13;
+ int jdoSize = 8;
  
    float x0  = 0.1*width;
    float y0 = 0.1*height;
@@ -20,12 +20,12 @@ class JdUnit {
  }
  
  void draw() {
-  if (frameCount%200==0) setup();
+  if (frameCount%300==0) setup();
   
   for (int i =0; i< jdoSize; i++) {
     fill(apal.getColor((coff + i* 0.2) * (0.5 + 0.5* sin(0.001* frameCount))));
     noStroke();
-     switch(floor(jdo[i].getVals()[0])) {
+     switch(floor(jdo[i].getType())) {
     case 0: 
       //println("Alpha");  // Does not execute
       break;
@@ -55,18 +55,15 @@ class JdUnit {
    float[] shadArr = new float[100];
    shadArr[0] = 1000.;
    int incr = 0;
-   int jdoCnt = 0;
      for (int i =0; i< jdoSize; i++) {
-       float[] vals = jdo[i].getVals();
-       if (vals[0]==0) {
+       //float[] vals = jdo[i].getVals();
+       if (jdo[i].getType() == 0) {
          // do nothing
        } else {
-          jdoCnt++;
-          for(int j =0; j < vals.length; j++) {
-           if (vals[j]>0) {
+          float[] valNomArr = jdo[i].getValsNormalized();
+          for(int j =0; j < valNomArr.length; j++) {
              incr++;
-             shadArr[incr] = vals[j];
-           }
+             shadArr[incr] = valNomArr[j];
           }
        }
        
@@ -82,7 +79,7 @@ class JdUnit {
  
  void drawSq1(Jdo jdo) {
    float[] val = jdo.getVals();
-   rect(val[1],val[2],val[3]-val[1],val[4]-val[2]);
+   rect(val[1],val[2],val[3],val[4]);
  }
  
  void drawTri2(Jdo jdo) {
@@ -106,15 +103,15 @@ class JdUnit {
    
    float a = x0;
    float b = y0;
-   float c = wmax;
-   float d = hmax;
+   float c = wmax - a;
+   float d = hmax - b;
    jdo[0] = new Jdo(1,a,b,c,d);
    //jdo[0] = defineCircle(7);
    
    //possible triangle points : 16:9
    if (random(1) > 0.6)
      jdo[1] = defineTriangleByAspect(16.,9.);
-
+   
    //jdo[1] = defineCircle(7);
 
    for (int i = 2; i < jdoSize; i++) {
@@ -157,9 +154,9 @@ class JdUnit {
    
    float type = 3; // circle type 3;
    float xoff = 0;
-      xoff = (wmax / aspectX)*floor(random(aspectX -1));
+      xoff = (wmax / aspectX)*(1+floor(random(aspectX-1)));
     float yoff = 0;
-      yoff = (wmax / aspectY)*floor(random(aspectY -1));
+      yoff = (wmax / aspectY)*(1+floor(random(aspectY-1)));
     
     float x1 = x0 + xoff; 
     float y1 = y0 + yoff;
@@ -176,15 +173,16 @@ class JdUnit {
     }
     float xoff = 0;
     if (xinc < aspectX) 
-      xoff = (wmax / aspectX)*floor(random((aspectX-xinc) -1));
+      xoff = (wmax / aspectX)*(floor(random((aspectX-xinc))));
     float yoff = 0;
     if (yinc < aspectY)
-      yoff = (wmax / aspectY)*floor(random((aspectY-yinc) -1));
+      yoff = (hmax / aspectY)*(floor(random((aspectY-yinc))));
     float a = x0 + xoff; 
     float b = y0 + yoff;
 
    float c = wmax * xinc / aspectX;
    float d = hmax * yinc / aspectY;
+   println(a + " " + b + " " + c + " " + d);
    return new Jdo(type,a,b,c,d); 
  }
 
@@ -232,6 +230,7 @@ class Jdo {
   
  // JenDu object
  float[] val;
+ float type;
 
    // val[0] : type
    // 1 = rect
@@ -243,20 +242,22 @@ class Jdo {
    // tri: 3 pairs
    // circle 1 pair + radius
 
- Jdo(float type) {
+ Jdo(float type_) {
    val = new float[10];
-   val[0] = type; // expecting 0
+   val[0] = type_; // expecting 0
+   type = type_;
  }
- Jdo(float type, float x1, float y1, float x2, float y2) {
+ Jdo(float type_, float x1, float y1, float x2, float y2) {
    val = new float[10];
    val[0] = type; // expecting 1
    val[1] = x1;
    val[2] = y1;
    val[3] = x2;
    val[4] = y2;
+   type = type_;
 
  }
- Jdo(float type, float x1, float y1, float x2, float y2, float x3, float y3) {
+ Jdo(float type_, float x1, float y1, float x2, float y2, float x3, float y3) {
    val = new float[10];
    val[0] = type; // expectin 2
    val[1] = x1;
@@ -265,16 +266,58 @@ class Jdo {
    val[4] = y2;
    val[5] = x3;
    val[6] = y3;
+   type = type_;
+   
  }
- Jdo(float type, float x1, float y1, float rad) {
+ Jdo(float type_, float x1, float y1, float rad) {
    val = new float[10];
    val[0] = type; // expectin 3
    val[1] = x1;
    val[2] = y1;
    val[3] = rad;
+   type = type_;
+   
  }
  
+ float getType() {
+   return type;
+ }
  float[] getVals() {
    return val;
+ }
+
+ float[] getValsNormalized() {
+   float[] ret = new float[1];
+   switch(floor(type)) {
+    case 1: // rect
+      ret = new float [5];
+      ret[0] = type;
+      ret[1] = val[1] / width;
+      ret[2] = val[2] / height;
+      ret[3] = val[3] / width;
+      ret[4] = val[4] / height;
+    break;
+    case 2:
+      ret = new float [7];
+      ret[0] = type;
+      ret[1] = val[1] / width;
+      ret[2] = val[2] / height;
+      ret[3] = val[3] / width;
+      ret[4] = val[4] / height;
+      ret[5] = val[5] / width;
+      ret[6] = val[6] / height;
+    
+    break;
+    case 3: // circle
+      ret = new float [4];
+      ret[0] = type;
+      ret[1] = val[1] / width;
+      ret[2] = val[2] / height;
+      ret[3] = val[3] / height ;
+    
+    break;
+   }
+   
+   return ret;
  }
 }

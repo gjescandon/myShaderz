@@ -16,8 +16,7 @@ uniform float iRandom1;
 uniform float iRandom2;
 uniform float iRandom3;
 uniform float[100] iRarr;
-//uniform int jdoCnt;
-
+uniform float iColorLimiter;
   
 //uniform sampler2D texture;
 
@@ -73,27 +72,6 @@ float noiseValue( in vec2 p )
 
   
  
- float getColor1D(float t0) {
-   // **** RGB in here **** 
-  float a1 = 0.2; // 
-
-  float b1 = 0.2; //oscilators amplitude
-
-  float c1 = 1.5 * (1 - 0.8* cos(0.03*iTime)); //input amplitude
-
-  float d1 = 0.; // offset
-
-  float factor = 1.0;
-
-  float tnom = t0-floor(t0);   // between 0.0 and 1.0
-
-  b1 = iRandom1;
-  //c1 = iRandom2;
-  d1 = iRandom3;
-
-  float h1 = factor * (a1 + b1 * cos(TWO_PI*(c1*tnom+d1)));
-  return h1; //fract(h1);   
- }
 
   vec3 getColor(float t0) {
    // **** RGB in here **** 
@@ -131,11 +109,11 @@ float noiseValue( in vec2 p )
 
   
   float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
-  float red1 = clamp(factor * (a1 + b1f),0.,1.);
+  float red1 = clamp(factor * (a1 + b1f),0.,iColorLimiter);
   float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
-  float grn2 = clamp(factor * (a2 + b2f),0.,1.);
+  float grn2 = clamp(factor * (a2 + b2f),0.,iColorLimiter);
   float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
-  float blu3 = clamp(factor * (a3 + b3f),0.,1.);
+  float blu3 = clamp(factor * (a3 + b3f),0.,iColorLimiter);
   vec3 c = vec3(red1,grn2,blu3);
   return c;   
  }
@@ -220,11 +198,13 @@ void main( void )
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     //p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
 
-  p = (2.0*gl_FragCoord.xy-0.9*iResolution.xy)/iResolution.y;
+  //p = (2.0*gl_FragCoord.xy-0.9*iResolution.xy)/iResolution.y;
 	//p = (2.0*gl_FragCoord.xy)/iResolution.y;
-	//p = gl_FragCoord.xy)/iResolution;
+
+	p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
 	//p *= 1.5;
-  
+  float aspect = iResolution.x/iResolution.y;
+
   vec3 colArr[13];
   float  jdoArr[13];
   for (int i = 0; i < colArr.length(); i++) {
@@ -246,41 +226,40 @@ void main( void )
 
   for (int i = 0 ; i < iRarr.length(); i++) {
     float ii = iRarr[i];
-    if (ii == 1.) { //square
-       a = iRarr[i+1]/iResolution.x;
-       b = iRarr[i+2]/iResolution.y;
-       c = iRarr[i+3]/iResolution.x;
-       d = iRarr[i+4]/iResolution.y;
-       //a = iRarr[i+1];
-       //b = iRarr[i+2];
-       //c = iRarr[i+3];
-       //d = iRarr[i+4];
-       dt = sdBox( p - vec2(a,b), vec2(c,d));
+    if (ii == 1.) { //rect
+
+       a = iRarr[i+1] * aspect;
+       b = iRarr[i+2];
+       c = iRarr[i+3] * aspect;
+       d = iRarr[i+4];
+       dt = sdBox( p + vec2(aspect, 1.) - vec2(c,d) - 2.*vec2(a,b),  vec2(c,d));
       jdoArr[jdoCnt] = dt;
   
       jdoCnt++;
     }
     
     if (iRarr[i] == 2.) { //triangle
-       a = iRarr[i+1]/iResolution.x;
-       b = iRarr[i+2]/iResolution.y;
-       c = iRarr[i+3]/iResolution.x;
-       d = iRarr[i+4]/iResolution.y;
-       e = iRarr[i+5]/iResolution.x;
-       f = iRarr[i+6]/iResolution.y;
+       float qf = 2.0;
+       a = iRarr[i+1] * aspect * qf;
+       b = iRarr[i+2] * qf;
+       c = iRarr[i+3] * aspect * qf;
+       d = iRarr[i+4] * qf;
+       e = iRarr[i+5] * aspect * qf;
+       f = iRarr[i+6] * qf;
   
-      float dt = sdTriangle(p, vec2(a,b), vec2(c,d), vec2(e,f));
+      float dt = sdTriangle(p + vec2(aspect, 1.), vec2(a,b), vec2(c,d), vec2(e,f));
       jdoArr[jdoCnt] = dt;
       dtx = dt;
   
       jdoCnt++;
     }
     if (iRarr[i] == 3.) { //circle
-       a = iRarr[i+1]/iResolution.x;
-       b = iRarr[i+2]/iResolution.y;
-       c = iRarr[i+3]/iResolution.y;
+
+       a = iRarr[i+1] * aspect;
+       b = iRarr[i+2];
+       c = iRarr[i+3];
       float dt = sdCircle( p , c );
-      dt = sdCircle( p - vec2(-0.5*a,b), c);
+      dt = sdCircle( p - vec2(1.) + vec2(a,b), c);
       jdoArr[jdoCnt] = dt;
       //dtx = dt;
   
@@ -299,10 +278,12 @@ void main( void )
 
   for (int i = 0 ; i < colArr.length(); i++) {
   //for (int i = 0 ; i < 5; i++) {
+    col += colArr[i] * getColor(iRandom1 + i * 0.1 + 0.01*iTime);
     for (int j = i; j >0; j--) {
-      col -= colArr[i]*colArr[j] * getColor(iRandom1 + (i-j) * 0.6);
+      //col -= colArr[i]*colArr[j] * getColor(iRandom1 + (i-j) * 0.6);
+      col -= colArr[i]*colArr[j] * col;
+      col += colArr[i]*colArr[j] * getColor(abs(1.-iRandom1 + (i-j) * 0.6));
     }
-    col += colArr[i] * getColor(iRandom1 + i * 0.6 + 0.01*iTime);
   }
    
 

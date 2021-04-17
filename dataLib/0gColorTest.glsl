@@ -309,7 +309,7 @@ void main( void )
     
     vec2 p = vec2(1.);
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-    p = gl_FragCoord.xy/iResolution.xy;
+    p = 6*(gl_FragCoord.xy/iResolution.xy);
 
     float bobSin = sin(0.04*iTime);
     float bobTim = 0.007*iTime;
@@ -321,7 +321,7 @@ void main( void )
     float rad = fract(xoff * xoff + yoff * yoff) + 0.2*random(p)*(1.5-sin(0.01*iTime));
     rad -= 0.006*iTime;
 
-    vec3 col = vec3(getColor(p.x));
+    vec3 col = vec3(p.x);
     if (p.y > 0.25) col = vec3(getColorStep(iRandom1 + p.x));
     if (p.y > 0.5) col = vec3(getColorSlow(iRandom2 + p.x));
     if (p.y > 0.75) col = vec3(getColorFast(iRandom3 + p.x));

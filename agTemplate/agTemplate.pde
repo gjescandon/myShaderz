@@ -10,9 +10,9 @@ void setup() {
   fill(204);
   //img = loadImage("seaShellFoam_mirror720.jpg");
   //toon = loadShader("0gColorStripes.glsl");
-  //toon = loadShader("0gQuilezJenDo.glsl");
   //toon = loadShader("0gUniformArrays.glsl");
-  toon = loadShader("0gColorTest.glsl");
+  //toon = loadShader("0gColorTest.glsl");
+  toon = loadShader("0gQuilezPrimatives.glsl");
   
   //toon = loadShader("bullsEye.glsl");
   //toon = loadShader("0gTemplate.glsl");
@@ -32,13 +32,28 @@ void draw() {
   toon.set("iRandom1", rr1);
   toon.set("iRandom2", rr2);
   toon.set("iRandom3", rr3);
+  toon.set("iFrame", frameCount);
+  
+  /*  *** FROM SHADER TOY
+  uniform vec3 iResolution;
+uniform float iTime;
+uniform float iTimeDelta;
+uniform float iFrame;
+uniform float iChannelTime[4];
+uniform vec4 iMouse;
+uniform vec4 iDate;
+uniform float iSampleRate;
+uniform vec3 iChannelResolution[4];
+uniform samplerXX iChanneli;*/
+
+
   toon.set("iRarr", rarr);
   
   //println(frameCount );
   
   
   shader(toon);
-  if (frameCount%100 ==0) rect(0,0,random(width), random(height));
+
   rect(0,0,width,height);
   //image(img,0,0);
   //saveFrame();

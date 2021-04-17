@@ -6,6 +6,7 @@ float rr1, rr2, rr3;
 // https://www.iquilezles.org/www/articles/deform/deform.htm
 PImage img;
 float[] rarr;
+float colorLimiter;
 
 NoizeBob cb,zbob, xbob, ybob, swb;
 int cnt;
@@ -17,6 +18,8 @@ void setup() {
   rr1 = random(1);
   rr2 = random(1);
   rr3 = random(1);
+  colorLimiter = 0.8;
+  
   rarr = new float[4];
   for (int i = 0; i < 4; i++) {
     rarr[i] = random(1);
@@ -37,7 +40,7 @@ void setup() {
 
 void draw() {
   background(0.);
-    if (frameCount%200==0) rr3 = random(1);
+    if (frameCount%600==0) rr3 = random(1);
 
   toon.set("iResolution", float(width), float(height));
   float tmilli = millis() / 1000.0;
@@ -45,7 +48,8 @@ void draw() {
   toon.set("iRandom1", rr1);
   toon.set("iRandom2", rr2);
   toon.set("iRandom3", rr3);
-  //toon.set("JdoCnt", jd.getCount());
+  toon.set("iRandom3", rr3);
+  toon.set("iColorLimiter", colorLimiter);
   toon.set("iRarr", jd.getFloatArr());
   
   //println(jd.getFloatArr()); // this looks correct.

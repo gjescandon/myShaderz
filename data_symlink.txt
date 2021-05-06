@@ -12,3 +12,7 @@ find . -iname "*.tif"  | xargs -I {}  mv {} ~/akWorkOSX/processingTiffs
 create mp4 from processingTiffs
 
 ffmpeg -r 60 -f image2 -s 1280X720 -i screen-%04d.tif -vcodec libx264 -crf 25  -pix_fmt yuv420p test.mp4
+
+ffmpeg -r 60 -f image2 -s 720X720 -i screen-%04d.tif -vcodec libx264 -crf 25 -pix_fmt yuv420p test.mp4
+
+ffmpeg -framerate 60 -i iscreen-%04d.tif -c:v copy output.mp4

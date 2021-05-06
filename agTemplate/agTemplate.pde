@@ -5,17 +5,17 @@ PImage img;
 float[] rarr;
 
 void setup() {
-  size(720, 720, P3D);
+  size(1280, 720, P3D);
   noStroke();
   fill(204);
   //img = loadImage("seaShellFoam_mirror720.jpg");
-  //toon = loadShader("0gColorStripes.glsl");
-  //toon = loadShader("0gUniformArrays.glsl");
-  //toon = loadShader("0gColorTest.glsl");
-  toon = loadShader("0gQuilezPrimatives.glsl");
+  //toon = loadShader("0gColorStripes.glsl"); // static color test
+  //toon = loadShader("0gUniformArrays.glsl"); // static color gradient
+  toon = loadShader("0gColorTest.glsl");  // static color test
+  //toon = loadShader("0gQuilezPrimatives.glsl"); 
   
-  //toon = loadShader("bullsEye.glsl");
-  //toon = loadShader("0gTemplate.glsl");
+  //toon = loadShader("bullsEye.glsl"); // bullseye mask
+  //toon = loadShader("0gTemplate.glsl");  // techno mask
   rr1 = random(1);
   rr2 = random(1);
   rr3 = random(1);

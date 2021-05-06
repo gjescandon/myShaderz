@@ -13,7 +13,6 @@ int cnt;
 void setup() {
   size(1280, 720, P3D);
   toon = loadShader("0gQuilezJenDo.glsl");
-  //toon = loadShader("0gUniformArrays.glsl");
   
   rr1 = random(1);
   rr2 = random(1);
@@ -58,7 +57,7 @@ void draw() {
   shader(toon);
   fill(0);
   rect(0,0,width,height);
-  jd.draw();
+  //jd.draw();
   
   //println(frameCount);
   //saveFrame();

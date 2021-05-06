@@ -3,45 +3,65 @@ class JdUnit {
  AutoPaletteRGB apal;
  float coff;
  Jdo[] jdo;
+ int[] jdoClock;
+ int[] jdoStartPoint; 
  float[] swArr;
  
  int jdoSize = 8;
  
-   float x0  = 0.1*width;
-   float y0 = 0.1*height;
-   float wmax = 0.9*width;
-   float hmax = 0.9 * height;
+   float x0  = 0.05*width;
+   float y0 = 0.05*height;
+   float wmax = 0.95*width;
+   float hmax = 0.95 * height;
    float aspectX = 16.;
    float aspectY = 9.;
+   
  JdUnit(){
    apal = new AutoPaletteRGB();
    coff = random(1);
+   qf = new QuilezFunctions();   
    setup();
  }
  
  void draw() {
-  if (frameCount%300==0) setup();
   
   for (int i =0; i< jdoSize; i++) {
-    fill(apal.getColor((coff + i* 0.2) * (0.5 + 0.5* sin(0.001* frameCount))));
-    noStroke();
-     switch(floor(jdo[i].getType())) {
-    case 0: 
-      //println("Alpha");  // Does not execute
-      break;
-    case 1: 
-      drawSq1(jdo[i]);  // Prints "Bravo"
-      break;
-    case 2: 
-      drawTri2(jdo[i]);  // Prints "Bravo"
-      break;
-    case 3: 
-      drawCircle3(jdo[i]);  // Prints "Bravo"
-      break;
-    default:
-      //println("Zulu");   // Does not execute
-      break;
+    
+    fill(apal.getColor((coff + 1.*i / jdoSize) * (1. + 0.5* sin(0.001* frameCount))));
+    noStroke();  
+    pushMatrix();
+    float ss = 1.;
+    
+    if(i>0) {
+    float ss1 = qf.expSustainedImpulse(1.*(frameCount-jdoStartPoint[i]),50., 1.);
+    float ss2 = qf.expStep(1.1*(frameCount-jdoStartPoint[i])/jdoClock[i], 40., 8. );
+    if (ss2 <= 0.05) {
+       jdo[i] = getJdo(floor(random(6)));
+       if (random(1) > 0.99) jdo[i] = defineTriangleByAspect(16.,9.);
+       jdoClock[i] = 1000 + floor(random(300));
+       jdoStartPoint[i] = frameCount;
+      }
+    ss = ss1 * ss2;
     }
+    
+     switch(floor(jdo[i].getType())) {
+      case 0: 
+        //println("Alpha");  // Does not execute
+        break;
+      case 1: 
+        drawSq1(jdo[i], ss);  // Prints "Bravo"
+        break;
+      case 2: 
+        drawTri2(jdo[i], ss);  // Prints "Bravo"
+        break;
+      case 3: 
+        drawCircle3(jdo[i], ss);  // Prints "Bravo"
+        break;
+      default:
+        //println("Zulu");   // Does not execute
+        break;
+    }
+    popMatrix();
     
   }
  }
@@ -55,7 +75,26 @@ class JdUnit {
    float[] shadArr = new float[100];
    shadArr[0] = 1000.;
    int incr = 0;
+   
+
      for (int i =0; i< jdoSize; i++) {
+       
+      float ss = 1.;
+      
+      if(i>0) {
+      float ss1 = qf.expSustainedImpulse(1.*(frameCount-jdoStartPoint[i]),50., 1.);
+      float ss2 = qf.expStep(1.1*(frameCount-jdoStartPoint[i])/jdoClock[i], 40., 8. );
+      if (ss2 <= 0.05) {
+         jdo[i] = getJdo(floor(random(6)));
+         if (random(1) > 0.9) jdo[i] = defineTriangleByAspect(16.,9.);
+         jdoClock[i] = 1000 + floor(random(300));
+         jdoStartPoint[i] = frameCount;
+        }
+      ss = ss1 * ss2;
+      }
+      
+
+       
        //float[] vals = jdo[i].getVals();
        if (jdo[i].getType() == 0) {
          // do nothing
@@ -63,7 +102,29 @@ class JdUnit {
           float[] valNomArr = jdo[i].getValsNormalized();
           for(int j =0; j < valNomArr.length; j++) {
              incr++;
+             
              shadArr[incr] = valNomArr[j];
+             
+             if (jdo[i].getType() ==1 ) { // square
+               //ss = 1.;
+               if (j == 3) shadArr[incr] = ss * (valNomArr[3]-valNomArr[1]);
+               if (j == 4) shadArr[incr] = ss * (valNomArr[4]-valNomArr[2]);
+             }
+             if (jdo[i].getType() ==2) { // triangle
+               
+               //ss = 1.;
+               shadArr[incr] = valNomArr[j];
+               if (j == 3) shadArr[incr] = map(ss, 0., 1., valNomArr[1], valNomArr[3]) ;
+               if (j == 4) shadArr[incr] = map(ss, 0., 1., valNomArr[2], valNomArr[4]) ;
+               if (j == 5) shadArr[incr] = map(ss, 0., 1., valNomArr[1], valNomArr[5]) ;
+               if (j == 6) shadArr[incr] = map(ss, 0., 1., valNomArr[2], valNomArr[6]);
+               
+             }
+             if (jdo[i].getType() ==3 && j == 3) { // circle
+               shadArr[incr] = ss * valNomArr[j];
+               
+             }
+             
           }
        }
        
@@ -72,33 +133,42 @@ class JdUnit {
    return shadArr;
  }
  
- void drawCircle3(Jdo jdo) {
+ void drawCircle3(Jdo jdo, float ss) {
    float[] val = jdo.getVals();
-   circle(val[1],val[2],val[3]);
+   circle(val[1],val[2], ss * val[3]);
  }
  
- void drawSq1(Jdo jdo) {
+ void drawSq1(Jdo jdo, float ss) {
+   //println ( "draw sq" );
+   
    float[] val = jdo.getVals();
-   rect(val[1],val[2],val[3],val[4]);
+   rect(val[1],val[2],ss * (val[3]-val[1]), ss* (val[4]-val[2]));
  }
  
- void drawTri2(Jdo jdo) {
+ void drawTri2(Jdo jdo, float ss) {
    float[] val = jdo.getVals();
-   triangle(val[1],val[2],val[3],val[4],val[5],val[6]);
+   
+   triangle(val[1],val[2],map(ss, 0., 1., val[1], val[3]), map(ss, 0., 1., val[2], val[4]), map(ss, 0., 1., val[1], val[5]), map(ss, 0., 1., val[2], val[6]));
    
  }
  
  void setup() {
    jdo = new Jdo[jdoSize]; 
    
+   
    swArr = new float[jdoSize];
+   jdoClock = new int[jdoSize];
+   jdoStartPoint = new int[jdoSize];
+   
    
    for (int i = 0; i < jdo.length; i++) {
     jdo[i] = new Jdo(0); 
     swArr[i] = random(10);
+    jdoStartPoint[i] = 0;
+    jdoClock[i] = 1000 + floor(random(300));
     if(swArr[i]<1.)swArr[i]=0.;
-    
-   }
+
+ }
 
    
    float a = x0;
@@ -116,8 +186,15 @@ class JdUnit {
 
    for (int i = 2; i < jdoSize; i++) {
      int sw = floor(10* random(1));
-     Jdo jdoX = new Jdo(0);
-     switch (sw) {
+     jdo[i] = getJdo(sw);
+   }
+      
+ }
+ 
+ 
+  Jdo getJdo(int index) {
+   Jdo jdoX = new Jdo(0);
+     switch (index) {
        case 0:
          jdoX = defineTriangleByAspect(8.,9.);
          break;
@@ -142,10 +219,10 @@ class JdUnit {
        default:
          break;
      }
-     jdo[i] = jdoX;
-   }
-      
+   return jdoX;
  }
+ 
+
  
  Jdo defineCircle(float radInc) {
 
@@ -156,7 +233,7 @@ class JdUnit {
    float xoff = 0;
       xoff = (wmax / aspectX)*(1+floor(random(aspectX-1)));
     float yoff = 0;
-      yoff = (wmax / aspectY)*(1+floor(random(aspectY-1)));
+      yoff = (hmax / aspectY)*(1+floor(random(aspectY-1)));
     
     float x1 = x0 + xoff; 
     float y1 = y0 + yoff;
@@ -182,7 +259,8 @@ class JdUnit {
 
    float c = wmax * xinc / aspectX;
    float d = hmax * yinc / aspectY;
-   println(a + " " + b + " " + c + " " + d);
+
+   
    return new Jdo(type,a,b,c,d); 
  }
 
@@ -190,10 +268,10 @@ class JdUnit {
 
     float xoff = 0;
     if (xinc < aspectX) 
-      xoff = (wmax / aspectX)*floor(random((aspectX-xinc) -1));
+      xoff = (wmax / aspectX)*floor(random((aspectX-xinc) - 2));
     float yoff = 0;
     if (yinc < aspectY)
-      yoff = (wmax / aspectY)*floor(random((aspectY-yinc) -1));
+      yoff = (hmax / aspectY)*floor(random((aspectY-yinc) - 2));
     float x1 = x0 + xoff; 
     float y1 = y0 + yoff;
     float x2 = wmax / (aspectX/xinc) + xoff;

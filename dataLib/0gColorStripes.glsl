@@ -185,10 +185,10 @@ void main( void )
     float rad = fract(xoff * xoff + yoff * yoff) + 0.2*random(p)*(1.5-sin(0.01*iTime));
     rad -= 0.006*iTime;
 
-    vec3 col = vec3(getColor(x));
-    if (y > 0.25) col = vec(getColor(iRandom1 + x));
-    if (y > 0.5) col = vec(getColor(iRandom2 + x));
-    if (y > 0.75) col = vec(getColor(iRandom3 + x));
+    vec3 col = vec3(getColor(p.x));
+    if (p.y > 0.25) col = vec3(getColor(iRandom1 + p.x));
+    if (p.y > 0.5) col = vec3(getColor(iRandom2 + p.x));
+    if (p.y > 0.75) col = vec3(getColor(iRandom3 + p.x));
     //col = vec3(getColor(fract(p.y + 0.2*random(p))));
     
     gl_FragColor = vec4(col, 1.0);

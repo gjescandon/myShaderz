@@ -700,6 +700,7 @@ mat3 setCamera( in vec3 ro, in vec3 ta, float cr )
 void main( void )
 {
   vec2 mo = vec2(0.5); //iMouse.xy/iResolution.xy;
+  mo += vec2(0.4*sin(0.1*iTime),0.4*cos(0.1*iTime));
 	float time = 32.0 + iTime*1.5;
 
     // camera	

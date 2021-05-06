@@ -3,14 +3,14 @@ PShader toon;
 // https://thebookofshaders.com/07/
 
 void setup() {
-  size(720, 720, P3D);
+  size(1280, 720, P3D);
   noStroke();
   fill(204);
-  //toon = loadShader("bos_07-01.glsl");
-  //toon = loadShader("bos_07-distance.glsl");
-  //toon = loadShader("bos_noise.glsl");
-  //toon = loadShader("bos_noiseLines.glsl");
-  toon = loadShader("bos_noiseRadial.glsl");
+  toon = loadShader("bos_07-01.glsl");
+  //toon = loadShader("bos_07-distance.glsl"); // shape demo
+  //toon = loadShader("bos_noise.glsl"); // static noise demo
+  //toon = loadShader("bos_noiseLines.glsl"); // noise lines
+  //toon = loadShader("bos_noiseRadial.glsl"); // radial noise + noise o scope wave
   //toon = loadShader("bos_patterns.glsl");
   //toon = loadShader("bos_patternsEvenOdd.glsl");
   //toon = loadShader("bos_random.glsl");

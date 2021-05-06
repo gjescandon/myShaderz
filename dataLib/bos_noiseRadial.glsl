@@ -141,11 +141,11 @@ void main() {
 	float f = 0.0;
 
     float r = length (uv);
-    float a = atan(uv.y/abs(uv.x));
+    float a = atan(uv.y * (0.5 + 0.4*cos(0.1*u_time))/abs(uv.x));
     
 
 
-		f = noiseValue( 10.0*vec2(r*a*(1+sin(u_time*0.06)),a) );
+		f = noiseValue( 10.0*vec2(r*a*(1+0.7*cos(u_time*0.1)),a) );
 
 
 	

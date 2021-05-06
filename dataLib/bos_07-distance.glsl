@@ -43,7 +43,7 @@ float trishape(vec2 st, int N) {
 }
 
 void main(){
-  vec2 st = gl_FragCoord.xy/u_resolution.xy;
+  vec2 st = 2.*gl_FragCoord.xy/u_resolution.xy - vec2(0.75,0.5);
   st.x *= u_resolution.x/u_resolution.y;
   vec3 color = vec3(0.0);
   float d = 0.0;

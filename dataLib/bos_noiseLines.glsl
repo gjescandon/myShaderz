@@ -144,12 +144,14 @@ void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
     st.y *= u_resolution.y/u_resolution.x;
 
-    vec2 pos = st.yx*vec2(10.,3.);
+    float ff = sin(0.05*u_time);
+
+    vec2 pos = st.yx*vec2(10.+ff,3.);
 
     float pattern = pos.x;
 
     // Add noise
-    pos = rotate2d( noiseValue(pos) * abs(sin(0.05*u_time))) * pos;
+    pos = rotate2d( noiseValue(pos) * abs(ff)) * pos;
 
     // Draw lines
     pattern = lines(pos,.5);

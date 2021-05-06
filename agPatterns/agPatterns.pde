@@ -1,6 +1,9 @@
 PShader toon;
 
 // https://thebookofshaders.com/07/
+  float iRandom1 = random(1);
+  float iRandom2 = random(2);
+  float iRandom3 = random(3);
 
 void setup() {
   size(1280, 720, P3D);
@@ -15,7 +18,10 @@ void draw() {
   toon.set("u_resolution", float(width), float(height));
   toon.set("u_mouse", float(mouseX), float(mouseY));
   toon.set("u_time", millis() / 1000.0);
-  
+  toon.set("iRandom1", iRandom1);
+  toon.set("iRandom2", iRandom2);
+  toon.set("iRandom3", iRandom3);
+  toon.set("iColorLimiter", 0.9);
   shader(toon);
   rect(0,0,width,height);
   //saveFrame();

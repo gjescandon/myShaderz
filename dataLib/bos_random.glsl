@@ -65,5 +65,7 @@ void main() {
 
     float rnd = random( st );
     float tri = trishape(st, 5);
+    tri = 1;
+    
     gl_FragColor = vec4(color * vec3(rnd * tri),1.0);
 }

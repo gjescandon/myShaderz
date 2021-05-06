@@ -200,13 +200,13 @@ void main() {
     // 2ND FROM TOP ROW
     yOff += 1.;
     if (i_st == vec2(0,2.)) {
-        float gain = sin(0.4*u_time);
-        cPy = yOff + gain(f_st.x, gain); 
+        float ss = sin(0.4*u_time);
+        cPy = yOff + gain(f_st.x, ss); 
         c = vec3(cubicPulse(cPy,w,p.y));
     }
     if (i_st == vec2(1.,2.)) {
-        float gain = 1+ 3.*abs(sin(0.3*u_time));
-        cPy = yOff + gain(f_st.x, gain); 
+        float ss = 1+ 3.*abs(sin(0.3*u_time));
+        cPy = yOff + gain(f_st.x, ss); 
         c = vec3(cubicPulse(cPy,w,p.y));
     }
     if (i_st == vec2(2.,2.)) {

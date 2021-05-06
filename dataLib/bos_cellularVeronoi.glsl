@@ -136,7 +136,7 @@ void main() {
 
 
     // Add distance field to closest point center
-    //color += m_dist*2.;
+    
     color += dot(m_point,vec2(.3,.7));
 
     // tint acording the closest point position
@@ -145,6 +145,7 @@ void main() {
     // Show isolines
     //color -= abs(sin(40.0*m_dist))*0.07;
     //color +=pow(m_dist,1.9);
+    
     // Draw point center
     color += 1.-step(.005, m_dist);
 

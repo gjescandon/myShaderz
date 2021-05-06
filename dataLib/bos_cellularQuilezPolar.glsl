@@ -84,20 +84,18 @@ void main() {
     vec3 color = vec3(0.);
 
     // Scale
-    float N = 4.;
+    float N = 1.;
     st = N * (2.*st - 1);
 
 
 
-    //vec3 c = voronoi(st);
-    float rad = 0.5*N;
-    float pct = plotCircle(st,rad);
-    //color = vec3(abs(pct));
-    pct = plotCircle(st,0.5 * rad);
-    //color += vec3(abs(pct));
+    vec3 c = voronoi(st);
+
+    color = vec3(0.);
+
+    color += c;
 
 
-    color = vec3(smoothstep(0.99,1.01,rad*rad/(st.x*st.x+st.y*st.y))-smoothstep(0.99,1.01,0.98*rad*rad/(st.x*st.x+st.y*st.y)));
     gl_FragColor = vec4(color,1.0);
 }
 

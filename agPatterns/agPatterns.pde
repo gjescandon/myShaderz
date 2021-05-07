@@ -2,8 +2,8 @@ PShader toon;
 
 // https://thebookofshaders.com/07/
   float iRandom1 = random(1);
-  float iRandom2 = random(2);
-  float iRandom3 = random(3);
+  float iRandom2 = random(1);
+  float iRandom3 = random(1);
 
 void setup() {
   size(1280, 720, P3D);
@@ -12,6 +12,10 @@ void setup() {
   
   toon = loadShader("0patterns.glsl");
   //toon.set("fraction", 1.0);
+  println(iRandom1);
+  println(iRandom2);
+  println(iRandom3);
+  
 }
 
 void draw() {

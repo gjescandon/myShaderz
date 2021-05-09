@@ -9,9 +9,10 @@ void setup() {
   noStroke();
   fill(204);
   //img = loadImage("seaShellFoam_mirror720.jpg");
-  //toon = loadShader("0gColorStripes.glsl"); // static color test
+  //toon = loadShader("0gColorStripes.glsl"); // moving stripes
+  toon = loadShader("0gColorCircles.glsl"); // moving circles
   //toon = loadShader("0gUniformArrays.glsl"); // static color gradient
-  toon = loadShader("0gColorTest.glsl");  // static color test
+  //toon = loadShader("0gColorTest.glsl");  // static color test
   //toon = loadShader("0gQuilezPrimatives.glsl"); 
   
   //toon = loadShader("bullsEye.glsl"); // bullseye mask
@@ -23,6 +24,10 @@ void setup() {
   for (int i = 0; i < 4; i++) {
     rarr[i] = random(1);
   }
+  println(rr1);
+  println(rr2);
+  println(rr3);
+  
 }
 
 void draw() {
@@ -32,7 +37,9 @@ void draw() {
   toon.set("iRandom1", rr1);
   toon.set("iRandom2", rr2);
   toon.set("iRandom3", rr3);
+  toon.set("iColorLimiter",1.0);
   toon.set("iFrame", frameCount);
+  
   
   /*  *** FROM SHADER TOY
   uniform vec3 iResolution;

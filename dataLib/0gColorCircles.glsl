@@ -182,18 +182,22 @@ void main( void )
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
 
-    float bobSin = sin(0.04*iTime);
-    float bobTim = 0.007*iTime;
+    //p.x += 0.1*sin((0.2)*iTime);
+    //p.y += 0.1*cos((0.2)*iTime);
+
+    // max vortex == length(p)
+    //p.x += 0.2*sin((0.2+length(p))*iTime);
+    //p.y += 0.2*cos((0.2+length(p))*iTime);
 
 
-    float bob = 0.03*random(p);
-    float xoff = p.x;// + 0.1*random(p);
-    float yoff = p.y;// + 0.1*random(p);
-    float rad = fract(xoff * xoff + yoff * yoff) + 0.2*random(p)*(1.5-sin(0.01*iTime));
-    rad -= 0.006*iTime;
+    //  vortex == length(p)
+    p.x += 0.1*sin((0.3)*iTime)*sin(2.*PI*length(p));
+    p.y += 0.1*cos((0.3)*iTime)*sin(2.*PI*length(p));
 
     vec3 col = vec3(getColor(p.x));
-    col = vec3(getColor(fract(p.x*(1+0.4*sin(PI*p.y)) + 0.1*sin(PI*p.y+ 0.3*iTime ) + 0.01*iTime )));
+
+    float tdriver  = 0.07*iTime * 0.; // zero is fine
+    col = vec3(getColor(fract(sin(PI*(length(p)+ 0.03*iTime)) + tdriver)));
     
     gl_FragColor = vec4(col, 1.0);
 }

@@ -5,6 +5,7 @@ mklink /D data X:\0GeoffData\bookOfShadersEx\data
 delete files:
 find . -name "*.tif" -print0 | xargs -0 rm 
 
+
 move files:
 find . -iname "*.tif"  | xargs -I {}  mv {} ~/akWorkOSX/processingTiffs 
 

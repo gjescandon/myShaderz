@@ -30,7 +30,7 @@ void setup() {
   //toon = loadShader("bos_noiseSimplex.glsl");
   //toon = loadShader("bos_rotation.glsl");
   //toon = loadShader("cell.glsl");
-  //toon = loadShader("kachinaFriend2.glsl");
+  //toon = loadShader("kachinaFriend2.glsl"); // quilez eyeball
   //toon = loadShader("quilezEquations.glsl");
   //toon.set("fraction", 1.0);
 }

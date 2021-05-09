@@ -296,9 +296,9 @@ void main( void )
     float d = sdEllipse((p+vec2(0,0.8)), ra);
     float noff = noiseValue(10.*(2+sin(0.1*iTime+PI_HALF))*p);
     vec3 col = vec3(1.0) - sign(d-0.3*noff)*vec3(1.0,1.0,1.0);
-    col -= vec3(d); // solo this for burning retina thing
-    col *= 1.0 - exp(-2.0*abs(d));
-    col *= 0.8 + 0.4*cos(60.0*d);
-    col = mix(col, vec3(1.0), 1.0-smoothstep(0.0, 0.02, abs(d - 0.1)));
+    //col -= vec3(d); // solo this for burning retina thing
+    //col *= 1.0 - exp(-2.0*abs(d));
+    //col *= 0.8 + 0.4*cos(60.0*d);
+    //col = mix(col, vec3(1.0), 1.0-smoothstep(0.0, 0.02, abs(d - 0.1)));
     gl_FragColor = vec4(col * getColor(0.01*iTime), 1.0);
 }

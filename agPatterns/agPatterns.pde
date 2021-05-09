@@ -10,7 +10,8 @@ void setup() {
   noStroke();
   fill(204);
   
-  toon = loadShader("0patterns.glsl");
+  //toon = loadShader("0patterns.glsl");
+  toon = loadShader("gFallingShapes.glsl");
   //toon.set("fraction", 1.0);
   println(iRandom1);
   println(iRandom2);

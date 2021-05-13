@@ -11,8 +11,8 @@ void setup() {
   //img = loadImage("face16.jpg");
   img = loadImage("Teahupoo.jpg");
   
-  //toon = loadShader("texture_frag.glsl");
-  toon = loadShader("two_tweets.glsl");
+  toon = loadShader("texture_frag.glsl");
+  //toon = loadShader("two_tweets.glsl");
 }
 
 void draw() {

@@ -135,21 +135,26 @@ void main() {
     /// quilez: value noize
     vec2 p = st;
 
-	vec2 uv = p*vec2(u_resolution.x/u_resolution.y,1.0);
-	uv = 2.*uv - 1.;
-
-	float f = 0.0;
+	  vec2 uv = p*vec2(u_resolution.x/u_resolution.y,1.0);
+    float aspect = u_resolution.x/u_resolution.y;
+	  uv = 2.*uv - vec2(aspect,1.);
+    float theta = 0.1*u_time;
+    
+    // concentric circles
+    //uv = vec2(length(uv)*cos(theta),length(uv)*sin(theta));
+  	float f = 0.0;
 
     float r = length (uv);
     float a = atan(uv.y * (0.5 + 0.4*cos(0.1*u_time))/abs(uv.x));
     
 
 
-		f = noiseValue( 10.0*vec2(r*a*(1+0.7*cos(u_time*0.1)),a) );
+		//f = noiseValue( 10.0*vec2(r*a*(1+0.7*cos(u_time*0.4)),a) );
+    f = noiseValue( 10.0*vec2(r*a*(u_time*0.04),a) );
 
 
 	
-	color = vec3(f);
+	  color = vec3(f);
 
 
 
@@ -159,6 +164,6 @@ void main() {
     float ptc = noize3(xOff);
     //color += vec3(1.- color0 - step(0.01, abs(ptc - st.y)));
     float fz = f * step(0.01, abs(ptc - st.y));
-    color = vec3(fz, fz, f);
+    //color = vec3(fz, fz, f);
     gl_FragColor = vec4(color,1.0);
 }

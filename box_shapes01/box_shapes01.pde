@@ -3,7 +3,7 @@ PShader toon;
 // https://thebookofshaders.com/07/
 
 void setup() {
-  size(1280, 720, P3D);
+  size(720, 720, P3D);
   noStroke();
   fill(204);
   
@@ -21,7 +21,7 @@ void setup() {
   
   //toon = loadShader("bos_randomExercise.glsl"); //lines marching
   //toon = loadShader("bos_noiseRadial.glsl"); // radial noise + noise o scope wave
-  //toon = loadShader("bos_randomCircles.glsl"); // expanding circles
+  toon = loadShader("bos_randomCircles.glsl"); // expanding circles
   // toon = loadShader("rayMarchDummy.glsl"); // simple ray march
   //toon = loadShader("bos_cellular.glsl");
   //toon = loadShader("bos_cellularQuilezPolar.glsl");

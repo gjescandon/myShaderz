@@ -6,11 +6,11 @@ void setup() {
   size(720, 720, P3D);
   noStroke();
   fill(204);
-  //toon = loadShader("bos_noise.glsl");
-  toon = loadShader("bos_noiseRadial.glsl");
-  //toon = loadShader("bos_noiseLines.glsl");
-  //toon = loadShader("bos_noiseDistance.glsl");
-  //toon = loadShader("bos_noiseSimplex.glsl");
+  //toon = loadShader("bos_noise.glsl");  // 2d noise compare
+  //toon = loadShader("bos_noiseRadial.glsl"); // radial 2d noise
+  //toon = loadShader("bos_noiseLines.glsl"); // horizontal lines noise basic
+  //toon = loadShader("bos_noiseDistance.glsl"); // quilez 2d noise animation
+  //toon = loadShader("bos_noiseSimplex.glsl"); // g basic noise box
 }
 
 void draw() {

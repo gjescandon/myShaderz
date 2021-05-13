@@ -25,12 +25,14 @@ void main( void )
 {
 
   vec2 st = gl_FragCoord.xy/u_resolution.xy;
+  vec2 p = st;//-vec2(0.5);
 
-    vec2 st-vec2(0.5);
-    //vec3 o;
-    vec3 d=.5-vec3(p,1)/u_resolution.x,o=d;
+
+    vec3 d=.5-vec3(p,1)/u_resolution.x;
+    vec3 o=d;
     for(int i=0;i<128;i++) o+=f(o)*d;
     vec4 c0 = vec4(1.0);
+    //c0.xyz = abs(f(o-d)*vec3(0,1,2)+f(o-.6)*vec3(2,1,0))*(1.-.1*o.z),1.0;
     c0.xyz = abs(f(o-d)*vec3(0,1,2)+f(o-.6)*vec3(2,1,0))*(1.-.1*o.z),1.0;
     gl_FragColor = c0;
 }

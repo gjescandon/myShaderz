@@ -6,7 +6,7 @@ void setup() {
   size(1280, 720, P3D);
   noStroke();
   fill(204);
-  img = loadImage("seaShellFoam_mirror720.jpg");
+  img = loadImage("gselfieOil.JPG");
   toon = loadShader("iqSquareTunnel.glsl");
   
 }

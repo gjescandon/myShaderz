@@ -1,6 +1,5 @@
 PShader toon;
 float rr1, rr2, rr3;
-// https://www.iquilezles.org/www/articles/deform/deform.htm
 PImage img;
 float[] rarr;
 
@@ -9,25 +8,13 @@ void setup() {
   noStroke();
   fill(204);
   //toon = loadShader("0gColorStripes.glsl"); // moving stripes
-  toon = loadShader("0gColorCircles.glsl"); // moving circles
-  //toon = loadShader("0gUniformArrays.glsl"); // static color gradient
-  //toon = loadShader("0gColorTest.glsl");  // static color test
-  //toon = loadShader("0gQuilezPrimatives.glsl"); 
-  
-  //toon = loadShader("bullsEye.glsl"); // bullseye mask
-  //toon = loadShader("0gTemplate.glsl");  // techno mask
+  toon = loadShader("0gGrids.glsl"); // moving circles
   rr1 = random(1);
   rr2 = random(1);
   rr3 = random(1);
-  rarr = new float[4];
-  for (int i = 0; i < 4; i++) {
-    rarr[i] = random(1);
-  }
   println(rr1);
   println(rr2);
   println(rr3);
-  
-  colorMode(HSB, 1.0);
   
 }
 
@@ -54,17 +41,12 @@ uniform float iSampleRate;
 uniform vec3 iChannelResolution[4];
 uniform samplerXX iChanneli;*/
 
-
-  toon.set("iRarr", rarr);
   
   println(frameCount );
   
-  fill(0.6, 0.9, 0.9);
-  rect(0,0,500,300);
+  
   shader(toon);
 
-  fill(0.3, 0.9, 0.9);
-  rect(100,100,width,width);
-  
+  rect(0,0,width,height);
   //saveFrame();
 }

@@ -193,11 +193,18 @@ void main( void )
     //  vortex == length(p)
     p.x += 0.1*sin((0.3)*iTime)*sin(2.*PI*length(p));
     p.y += 0.1*cos((0.3)*iTime)*sin(2.*PI*length(p));
+    //p.x = pow((p.x),0.8);
+
+    float dd = 1.5+sin(0.05*iTime);
+    
+    //p.x *= pow(p.y+1.,dd);
+    p.y = pow(p.y+0.5,dd);
 
     vec3 col = vec3(getColor(p.x));
 
-    float tdriver  = 0.07*iTime * 0.; // zero is fine
-    col = vec3(getColor(fract(sin(PI*(length(p)+ 0.03*iTime)) + tdriver)));
+    float tdriver  = 0.07*iTime; // zero is fine
+    col = vec3(getColor(fract(sin(1.5*PI*(1+length(p))* 0.003*iTime))));
+    //col = vec3(getColor(fract(sin(PI*length(p)+ 0.03*iTime) )));
     
     gl_FragColor = vec4(col, 1.0);
 }

@@ -17,11 +17,7 @@ uniform float iRandom3;
 uniform float iColorLimiter;
 
 uniform sampler2D texture01;
-uniform float tex01W;
-uniform float tex01H;
 uniform sampler2D texture02;
-uniform float tex02W;
-uniform float tex02H;
 
 
 float hash(float x, float y) {
@@ -285,6 +281,10 @@ float sdRhombus( vec2 p, vec2 b) {
 
 }
 
+vec3 colorClamp(vec3 color) {
+    return clamp(color, vec3(0.), vec3(1.));
+}
+
 void main( void )
 {
     
@@ -295,34 +295,74 @@ void main( void )
 
     //p +=vec2(p.x*sin(0.25*iTime),p.y*cos(0.25*iTime));
     vec2 p1 = p;
-    p1.x += 0.5*sin(0.25*iTime);
-    p1.y += 0.5*cos(0.25*iTime);
+    p1.x += 0.5*sin(0.25*iTime + noize3(0.1*iTime));
+    p1.y += 0.5*cos(0.25*iTime + noize3(0.3*iTime));
     vec2 p2 = p;
-    p2.x += 0.5*sin(0.25*iTime + PI_HALF);
-    p2.y += 0.5*cos(0.25*iTime + PI_HALF);
+    p2.x += 0.5*sin(0.25*iTime + PI_HALF + noize3(0.3*iTime));
+    p2.y += 0.5*cos(0.25*iTime + PI_HALF + noize3(0.5*iTime));
+    vec2 p3 = p;
+    p3.x += 0.5*sin(0.25*iTime + 2.*PI_HALF + noize3(0.5*iTime));
+    p3.y += 0.5*cos(0.25*iTime + 2.*PI_HALF + noize3(0.7*iTime));
+    vec2 p4 = p;
+    p4.x += 0.5*sin(0.25*iTime + 3.*PI_HALF + noize3(0.7*iTime));
+    p4.y += 0.5*cos(0.25*iTime + 3.*PI_HALF + noize3(0.9*iTime));
+
     float d = sdRhombus(p1, ra);
     float d2 = sdRhombus(p2, ra2);
+    float d3 = sdRhombus(p3, ra);
+    float d4 = sdRhombus(p4, ra2);
 
-    vec3 col = vec3(1.0) - sign(d);
+    vec3 col = clamp(10.*(vec3(1.0) - sign(d)), vec3(0.), vec3(1.));
+    vec3 col2 = clamp(10.*(vec3(1.0) - sign(d2)), vec3(0.), vec3(1.));
+    vec3 col3 = clamp(10.*(vec3(1.0) - sign(d3)), vec3(0.), vec3(1.));
+    vec3 col4 = colorClamp(10.*(vec3(1.0) - sign(d4)));
+
+    vec3 colCross12 = col * col2;
+    vec3 colCross13 = col * col3;
+    vec3 colCross14 = col * col4;
+    vec3 colCross23 = col2 * col3;
+    vec3 colCross24 = col2 * col4;
+    vec3 colCross34 = col3 * col4;
+    vec3 colCross123 = col * col2 * col3;
+    vec3 colCross124 = col * col2 * col4;
+    vec3 colCross134 = col * col3 * col4;
+    vec3 colCross234 = col3 * col2 * col4;
+
+    col = colorClamp(col - colCross12);    
+    col = colorClamp(col - colCross13);    
+    col = colorClamp(col - colCross14);    
+    col = colorClamp(col - colCross123);    
+    col = colorClamp(col - colCross134);    
+    col = colorClamp(col - colCross124);    
+
+    col3 = colorClamp(col3 - colCross23);    
+    col3 = colorClamp(col3 - colCross24);    
+    col3 = colorClamp(col3 - colCross34);    
+    col3 = colorClamp(col3 - colCross123);    
+    col3 = colorClamp(col3 - colCross134);    
+    col3 = colorClamp(col3 - colCross234);    
     
-
-    vec3 col2 = vec3(1.0) - sign(d2);
-
+    col2 = colorClamp(col2 - colCross24);    
+    
+    
     col *= texture2D(texture01, p1 + 0.5).xyz;
-    col = mix(col, vec3(1.0), 1.0-smoothstep(0.0, 0.02, abs(d)));
+    col = mix(col, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d)));
 
-    col -= clamp(vec3(0.),vec3(1.),col*col2);
-    col -= clamp(vec3(0.),vec3(1.),(vec3(1.0) - sign(d))*col2);
 
     // col -= vec3(d); // solo this for burning retina thing
     //col *= 1.0 - exp(-2.0*abs(d));
     //col *= 0.8 + 0.2*cos(140.0*d); // parallel lines
 
+
     col2 *= texture2D(texture02, p2 + 0.5).xyz;
-    col2 = mix(col2, vec3(1.0), 1.0-smoothstep(0.0, 0.02, abs(d2)));
+    col2 = mix(col2, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d2)));
+    col3 *= texture2D(texture01, p3 + 0.5).xyz;
+    col3 = mix(col3, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d3)));
+    col4 *= texture2D(texture02, p4 + 0.5).xyz;
+    col4 = mix(col4, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d4)));
     
-    col += col2;
-    
+    col += (col2 + col3 + col4);
+    //col = col2 + col4;
     gl_FragColor = vec4(col, 1.0);
     
 }

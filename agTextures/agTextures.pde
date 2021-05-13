@@ -2,7 +2,7 @@ PImage img1, img2;
 PShader colorShader;
 
 void setup() {
-  size(1280, 720, P3D);
+  size(720, 720, P3D);
    img1 = loadImage("lachoy.jpg");
     img2 = loadImage("gselfieOil.JPG");
     colorShader = loadShader("0gTextures.glsl");
@@ -21,4 +21,6 @@ void draw() {
   
   shader(colorShader);
   rect(0,0, width,height);
+  println(frameCount);
+  saveFrame();
 }

@@ -8,8 +8,11 @@ void setup() {
   size(1280, 720, P3D);
   noStroke();
   fill(204);
-  //toon = loadShader("0gColorStripes.glsl"); // moving stripes
-  toon = loadShader("0gColorCircles.glsl"); // moving circles
+  //toon = loadShader("0gColorStripes.glsl"); // moving stripes :: many
+  toon = loadShader("0gBrokenColorStripes.glsl"); // moving stripes :: many
+  //toon = loadShader("0gBlues.glsl"); // moving 2D :: many
+  
+  //toon = loadShader("0gColorCircles.glsl"); // moving circles
   //toon = loadShader("0gUniformArrays.glsl"); // static color gradient
   //toon = loadShader("0gColorTest.glsl");  // static color test
   //toon = loadShader("0gQuilezPrimatives.glsl"); 
@@ -60,11 +63,9 @@ uniform samplerXX iChanneli;*/
   println(frameCount );
   
   fill(0.6, 0.9, 0.9);
-  rect(0,0,500,300);
+  rect(0,0,width,height);
   shader(toon);
 
-  fill(0.3, 0.9, 0.9);
-  rect(100,100,width,width);
   
   //saveFrame();
 }

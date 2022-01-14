@@ -15,7 +15,7 @@ uniform float iTime;
 uniform float iRandom1;
 uniform float iRandom2;
 uniform float iRandom3;
-
+uniform sampler2D texture01;
 
 //uniform sampler2D texture;
 
@@ -131,88 +131,76 @@ float noiseValue( in vec2 p )
 
   
   float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
-  float red1 = clamp((a1 + b1f), 0.1, 0.7);
+  float red1 = clamp((a1 + b1f), 0., 1.);
   float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
-  float grn2 = clamp((a2 + b2f), 0.1, 0.7);
+  float grn2 = clamp((a2 + b2f), 0., 1.);
   float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
-  float blu3 = clamp((a3 + b3f), 0.1, 0.7);
+  float blu3 = clamp((a3 + b3f), 0., 1.);
   vec3 c = vec3(red1,grn2,blu3);
   return c;   
  }
 
-float sdEllipse( in vec2 p, in vec2 ab )
+
+
+// Created by inigo quilez - iq/2013
+// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+// Instead of using a pont, circle, line or any mathematical shape for traping the orbit
+// of fc(z), one can use any arbitrary shape. For example, a NyanCat :)
+//
+// I invented this technique more than 10 years ago (can have a look to those experiments 
+// here http://www.iquilezles.org/www/articles/ftrapsbitmap/ftrapsbitmap.htm).
+
+vec4 getNyanCatColor( vec2 p, float time )
 {
-    p = abs(p); if( p.x > p.y ) {p=p.yx;ab=ab.yx;}
-    float l = ab.y*ab.y - ab.x*ab.x;
-    float m = ab.x*p.x/l;      float m2 = m*m; 
-    float n = ab.y*p.y/l;      float n2 = n*n; 
-    float c = (m2+n2-1.0)/3.0; float c3 = c*c*c;
-    float q = c3 + m2*n2*2.0;
-    float d = c3 + m2*n2;
-    float g = m + m*n2;
-    float co;
-    if( d<0.0 )
-    {
-        float h = acos(q/c3)/3.0;
-        float s = cos(h);
-        float t = sin(h)*sqrt(3.0);
-        float rx = sqrt( -c*(s + t + 2.0) + m2 );
-        float ry = sqrt( -c*(s - t + 2.0) + m2 );
-        co = (ry+sign(l)*rx+abs(g)/(rx*ry)- m)/2.0;
-    }
-    else
-    {
-        float h = 2.0*m*n*sqrt( d );
-        float s = sign(q+h)*pow(abs(q+h), 1.0/3.0);
-        float u = sign(q-h)*pow(abs(q-h), 1.0/3.0);
-        float rx = -s - u - c*4.0 + 2.0*m2;
-        float ry = (s - u)*sqrt(3.0);
-        float rm = sqrt( rx*rx + ry*ry );
-        co = (ry/sqrt(rm-rx)+2.0*g/rm-m)/2.0;
-    }
-    vec2 r = ab * vec2(co, sqrt(1.0-co*co));
-    return length(r-p) * sign(p.y-r.y);
+	p = clamp(p,0.0,1.0);
+	//p.x = p.x*40.0/256.0;
+	p.x = 0.5 + 1.0*(0.5-p.x);
+	p.y = 0.5 + 1.0*(0.5-p.y);
+	p = clamp(p,0.0,1.0);
+	//float fr = floor( mod( 20.0*time, 6.0 ) );
+	//p.x += fr*40.0/256.0;
+	return texture2D( texture01, p);
 }
 
-
-float quaver( float x)
+void main( void)
 {
-    // iq : almostIdentity
-    float n = 3.;
-    return sqrt((x+sin(x))*(x+sin(x))+n);
-}
-
-void main( void )
-{
+    vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     
-    vec2 p = vec2(1.);
-    //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-    p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
-
-    //p.x += 0.1*sin((0.2)*iTime);
-    //p.y += 0.1*cos((0.2)*iTime);
-
-    // max vortex == length(p)
-    //p.x += 0.2*sin((0.2+length(p))*iTime);
-    //p.y += 0.2*cos((0.2+length(p))*iTime);
-
-
-    //  vortex == length(p)
-    p.x += 0.1*sin((0.3)*iTime)*sin(2.*PI*length(p));
-    p.y += 0.1*cos((0.3)*iTime)*sin(2.*PI*length(p));
-    //p.x = pow((p.x),0.8);
-
-    float dd = 1.5+sin(0.05*iTime);
+    float time = max( iTime-5.5, 0.0 );
     
-    //p.x *= pow(p.y+1.,dd);
-    p.y = pow(p.y+0.5,dd);
+    // zoom	
+    float zz = 20.; // 20.;
+    float pzz = 1.75; // 0.75;
+	p = vec2(0.5,-0.05)  + p*pzz * pow( .7, zz*(0.5+0.5*cos(0.15*time)) );
+	
+    vec4 col = vec4(0.0);
+    vec3 sa = vec3( 0.2,0.2, 1.0 ); //vec3( 0.2,0.2, 1.0 );
+    vec3 sb = vec3( 0.4,-0.2,0.8);//vec3( 0.5,-0.2,0.5);
+	vec3 s = mix( sa, sb, 0.5+0.5*sin(0.5*time) );
 
-    vec3 col = vec3(getColor(p.x));
+    // iterate Jc	
+	vec2 c = vec2(-0.76, 0.15);
+	float f = 0.0;
+	vec2 z = p;
+	for( int i=0; i<100; i++ )
+	{
+		if( (dot(z,z)>4.0) || (col.w>0.1) ) break;
 
-    float tdriver  = 0.07*iTime; // zero is fine
+        // fc(z) = z² + c		
+		z = vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + c;
+		
+		col = getNyanCatColor( s.xy + 1.1*s.z*z, time );
+    //col.xyz = getColor(2.0*length(z));
+		f += 1.0;
+	}
+	
+	vec3 bg = 0.5*vec3(1.0,0.5,0.5) * sqrt(f/100.0);
+	
+	col.xyz = mix( bg, col.xyz, col.w );
     
-    col = getColor(fract(sin(1.5*PI*(1.-length(p))* 0.03*quaver(iTime))));
-    //col = vec3(getColor(fract(sin(PI*length(p)+ 0.03*iTime) )));
-    
-    gl_FragColor = vec4(col, 1.0);
+    //col *= step( 2.0, iTime );
+    //col += texture( iChannel1, vec2(0.01,0.2) ).x * (1.0-step( 5.5, iTime ));
+    //col += texture2D(texture01, vec2(0.01,0.2) ).x * (1.0-step( 5.5, iTime ));
+	gl_FragColor = vec4( col.xyz,1.0);
 }

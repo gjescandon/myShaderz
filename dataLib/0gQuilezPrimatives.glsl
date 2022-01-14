@@ -517,6 +517,7 @@ vec2 raycast( in vec3 ro, in vec3 rd )
     //else return res;
     
     // raymarch primitives   
+    
     vec2 tb = iBox( ro-vec3(0.0,0.4,-0.5), rd, vec3(2.5,0.41,3.0) );
     if( tb.x<tb.y && tb.y>0.0 && tb.x<tmax)
     {
@@ -612,7 +613,7 @@ vec3 render( in vec3 ro, in vec3 rd, in vec3 rdx, in vec3 rdy )
     // background
     vec3 col = vec3(0.7, 0.7, 0.9) - max(rd.y,0.0)*0.3;
     
-    // raycast scene
+    // raycast scene  ******************
     vec2 res = raycast(ro,rd);
     float t = res.x;
 	float m = res.y;

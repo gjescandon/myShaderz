@@ -32,7 +32,7 @@ class JdUnit {
     pushMatrix();
     float ss = 1.;
     
-    if(i>0) {
+    
     float ss1 = qf.expSustainedImpulse(1.*(frameCount-jdoStartPoint[i]),50., 1.);
     float ss2 = qf.expStep(1.1*(frameCount-jdoStartPoint[i])/jdoClock[i], 40., 8. );
     if (ss2 <= 0.05) {
@@ -42,7 +42,7 @@ class JdUnit {
        jdoStartPoint[i] = frameCount;
       }
     ss = ss1 * ss2;
-    }
+    
     
      switch(floor(jdo[i].getType())) {
       case 0: 
@@ -81,7 +81,7 @@ class JdUnit {
        
       float ss = 1.;
       
-      if(i>0) {
+      
       float ss1 = qf.expSustainedImpulse(1.*(frameCount-jdoStartPoint[i]),50., 1.);
       float ss2 = qf.expStep(1.1*(frameCount-jdoStartPoint[i])/jdoClock[i], 40., 8. );
       if (ss2 <= 0.05) {
@@ -91,7 +91,7 @@ class JdUnit {
          jdoStartPoint[i] = frameCount;
         }
       ss = ss1 * ss2;
-      }
+      
       
 
        
@@ -202,19 +202,19 @@ class JdUnit {
          jdoX = defineTriangleByAspect(8.,6.);
          break;
        case 2:
-         jdoX = defineTriangleByAspect(4.,6.);
+         jdoX = defineRectByAspect(6.,8.);
          break;
        case 3:
-         jdoX = defineRectByAspect(4.,3.);
+         jdoX = defineRectByAspect(8.,6.);
          break;
        case 4:
-         jdoX = defineRectByAspect(4.,6.);
+         jdoX = defineRectByAspect(12.,9.);
          break;
        case 5:
-         jdoX = defineCircle(7);
+         jdoX = defineCircle(8);
          break;
        case 6:
-         jdoX = defineCircle(3);
+         jdoX = defineCircle(5);
          break;
        default:
          break;
@@ -250,10 +250,10 @@ class JdUnit {
     }
     float xoff = 0;
     if (xinc < aspectX) 
-      xoff = (wmax / aspectX)*(floor(random((aspectX-xinc))));
+      xoff = (wmax / aspectX)*(floor(random((aspectX))));
     float yoff = 0;
     if (yinc < aspectY)
-      yoff = (hmax / aspectY)*(floor(random((aspectY-yinc))));
+      yoff = (hmax / aspectY)*(floor(random((aspectY))));
     float a = x0 + xoff; 
     float b = y0 + yoff;
 

@@ -26,7 +26,7 @@ float random (vec2 st) {
         x2);
 }
 
-float random2 (vec2 st) {
+float randomB (vec2 st) {
     return fract(sin(dot(st.xy,
                          vec2(100*iRandom1,100*iRandom2)))*
         43758.5453123);
@@ -53,7 +53,7 @@ float hash(vec2 p)  // replace this by something better
     return -1.0+2.0*fract( p.x*p.y*(p.x+p.y) );
 }
 
-float noiseValue( in vec2 p )
+float noiseVal( in vec2 p )
 {
     vec2 i = floor( p );
     vec2 f = fract( p );
@@ -133,6 +133,12 @@ float noiseValue( in vec2 p )
   return c;   
  }
 
+float sdCircleNoize( vec2 p, float r )
+{
+  vec2 pn = vec2(p.x+ 0.1*sin(noize3(0.5*iTime)),p.y+ 0.1*sin(noize3(0.2*iTime)));
+    return length(pn) - r;
+}
+
 float sdEllipse( in vec2 p, in vec2 ab )
 {
     p = abs(p); if( p.x > p.y ) {p=p.yx;ab=ab.yx;}
@@ -174,18 +180,26 @@ void main( void )
     vec2 p = vec2(1.);
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
+    p.x = p.x + 0.5*sin(noize3(0.1*iTime) + 0.06*iTime + 10.*iRandom1);
+    p.y = p.y + 0.2*sin(noize3(0.2*iTime) + 0.05*iTime  + 10.*iRandom2);
 
     float bobSin = sin(0.04*iTime);
     float bobTim = 0.007*iTime;
 
 
     float bob = 0.03*random(p);
-    float xoff = p.x;// + 0.1*random(p);
-    float yoff = p.y;// + 0.1*random(p);
-    float rad = length(p) * (1+sin(noize3(0.6*iTime)));
-    float radstep = step(0.1, rad);
-    vec3 col = vec3(radstep);
-    col *= noize3(10*(1+sin(rad - 0.06*iTime)));
+    float xoff = p.x + 0.1*random(p);
+    float yoff = p.y + 0.1*random(p);
+    vec2 pn = vec2(p.x+ 0.1*sin(noize3(0.3*iTime)),p.y+ 0.1*sin(noize3(0.2*iTime)));
+    //float rad = ((length(p)) * (1+sin(noize3(0.3*iTime))) );
+    float rr = 0.1*(1+sin(noize3(0.3*iTime)));
+    rr = 0.1*(1+sin((0.3*iTime)));
+
+    float rad = length(pn) - rr;
+    //float noff = randomB(10.*(2+sin(0.1*iTime+PI_HALF))*p);
+    float radstep = step(0.1, (rad));
+    vec3 col = vec3(radstep );
+    col *= noize3(10*(1+sin(rad - 0.16*iTime - 10.*iRandom3)));
     
     gl_FragColor = vec4(step(0.2,col), 1.0);
 }

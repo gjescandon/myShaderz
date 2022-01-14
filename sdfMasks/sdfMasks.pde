@@ -1,4 +1,4 @@
-PShader toon;
+  PShader toon;
 
 // https://www.iquilezles.org/www/articles/deform/deform.htm
 PImage img;

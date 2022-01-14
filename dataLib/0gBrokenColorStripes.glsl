@@ -100,8 +100,8 @@ float noiseValue( in vec2 p )
   float a3 = 0.7;  // blue
   
   float b1 = 0.4; //oscilators amplitude
-  float b2 = 0.2;
-  float b3 = 0.5;
+  float b2 = 0.5;
+  float b3 = 0.3;
 
   float c1 = 1.0; //input amplitude
   float c2 = 1.0;
@@ -117,26 +117,34 @@ float noiseValue( in vec2 p )
   a2 = iRandom2;
   a3 = iRandom3;
 
-  d1 = iRandom1;
-  d2 = iRandom2;
-  d3 = iRandom3;
+  d1 = iRandom1 * (1 + 0.5*iTime);
+  d2 = iRandom2 * (1 + 0.5*iTime);
+  d3 = iRandom3 * (1 + 0.5*iTime);
 
+  
   b1 = iRandom3;
   b2 = iRandom1;
   b3 = iRandom2;
 
-  c1 *= floor(10*iRandom3);
-  c2 *= floor(10*iRandom1);
-  c3 *= floor(10*iRandom2);
+  
+  // broken colors : non-integer
+  c1 *= 6*iRandom3;
+  c2 *= 6*iRandom1;
+  c3 *= 6*iRandom2;
 
   
-  float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
-  float red1 = clamp((a1 + b1f), 0.1, 0.7);
+  float b1f = b1 * cos(TWO_PI*(c1*tnom + d1));
+  float red1 = (a1 + b1f);
+  //red1 = clamp((a1 + b1f), 0., 1.);
   float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
-  float grn2 = clamp((a2 + b2f), 0.1, 0.7);
+  float grn2 = (a2 + b2f);
+  //grn2 = clamp((a2 + b2f), 0., 1.);
   float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
-  float blu3 = clamp((a3 + b3f), 0.1, 0.7);
-  vec3 c = vec3(red1,grn2,blu3);
+  float blu3 = (a3 + b3f);
+  //blu3 = clamp((a3 + b3f), 0., 1.);
+  
+  vec3 c = vec3(red1,grn2,blu3); // mulitcolor
+  //vec3 c = vec3(red1,red1,red1);  // grayscale
   return c;   
  }
 
@@ -174,12 +182,9 @@ float sdEllipse( in vec2 p, in vec2 ab )
     return length(r-p) * sign(p.y-r.y);
 }
 
+float sq(float x) {
+  return 4 * (sin(x) + 0.33*sin(3*x) + 0.2*sin(5*x)) / PI;
 
-float quaver( float x)
-{
-    // iq : almostIdentity
-    float n = 3.;
-    return sqrt((x+sin(x))*(x+sin(x))+n);
 }
 
 void main( void )
@@ -187,32 +192,20 @@ void main( void )
     
     vec2 p = vec2(1.);
     //p = ((2.0+sin(0.03*iTime))*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-    p = gl_FragCoord.xy/iResolution.xy - vec2(0.5);
+    p = (2*gl_FragCoord.xy-iResolution.xy)/iResolution.xy;
 
-    //p.x += 0.1*sin((0.2)*iTime);
-    //p.y += 0.1*cos((0.2)*iTime);
-
-    // max vortex == length(p)
-    //p.x += 0.2*sin((0.2+length(p))*iTime);
-    //p.y += 0.2*cos((0.2+length(p))*iTime);
+    float bobSin = sin(0.04*iTime);
+    float bobTim = 0.007*iTime;
 
 
-    //  vortex == length(p)
-    p.x += 0.1*sin((0.3)*iTime)*sin(2.*PI*length(p));
-    p.y += 0.1*cos((0.3)*iTime)*sin(2.*PI*length(p));
-    //p.x = pow((p.x),0.8);
-
-    float dd = 1.5+sin(0.05*iTime);
-    
-    //p.x *= pow(p.y+1.,dd);
-    p.y = pow(p.y+0.5,dd);
+    float bob = 0.03*random(p);
+    float xoff = p.x;// + 0.1*random(p);
+    float yoff = p.y;// + 0.1*random(p);
+    float rad = fract(xoff * xoff + yoff * yoff) + 0.2*random(p)*(1.5-sin(0.01*iTime));
+    rad -= 0.006*iTime;
 
     vec3 col = vec3(getColor(p.x));
-
-    float tdriver  = 0.07*iTime; // zero is fine
-    
-    col = getColor(fract(sin(1.5*PI*(1.-length(p))* 0.03*quaver(iTime))));
-    //col = vec3(getColor(fract(sin(PI*length(p)+ 0.03*iTime) )));
-    
+    col = vec3(getColor(p.x+noize3(noize3(2*p.y) - 0.17*iTime + floor(10*iRandom1))));
+    col *= vec3(getColor(p.y+noize3(noize3(2*p.x)- 0.27*iTime + floor(10*iRandom2))));
     gl_FragColor = vec4(col, 1.0);
 }

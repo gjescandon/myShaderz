@@ -30,5 +30,5 @@ void draw() {
   shader(toon);
   rect(0,0,width,height);
   //saveFrame();
-  //println(frameCount);
+  println(frameCount);
 }

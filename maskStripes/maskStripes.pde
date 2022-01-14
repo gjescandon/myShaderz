@@ -5,21 +5,14 @@ PImage img;
 float[] rarr;
 
 void setup() {
-  size(720, 720, P3D);
+  size(1280, 720, P3D);
   noStroke();
   fill(204);
-  toon = loadShader("0gColorStripes.glsl"); // moving stripes :: many
-  //toon = loadShader("0gBrokenColorStripes.glsl"); // moving stripes :: many
-  //toon = loadShader("0gBlues.glsl"); // moving 2D :: many
-  
-  //toon = loadShader("0gColorCircles.glsl"); // moving circles
-  
-  //toon = loadShader("0gUniformArrays.glsl"); // static color gradient
-  //toon = loadShader("0gColorTest.glsl");  // static color test
-  //toon = loadShader("0gQuilezPrimatives.glsl"); 
+  //toon = loadShader("maskStripes.glsl"); // moving stripes :: many
   
   //toon = loadShader("bullsEye.glsl"); // bullseye mask
-  //toon = loadShader("0gTemplate.glsl");  // techno mask
+  //toon = loadShader("sdfMasks.glsl");  // techno mask
+  toon = loadShader("kateDehler_Mask.glsl");  // dehler mask
   rr1 = random(1);
   rr2 = random(1);
   rr3 = random(1);
@@ -65,8 +58,9 @@ uniform samplerXX iChanneli;*/
   
   fill(0.);
   rect(0,0,width,height);
-  shader(toon);
+    shader(toon);
 
   
-  saveFrame();
+  //saveFrame();
+  println(frameCount);
 }

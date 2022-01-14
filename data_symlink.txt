@@ -3,7 +3,7 @@ mklink /D data X:\0GeoffData\bookOfShadersEx\data
 
 
 delete files:
-find . -name "*.tif" -print0 | xargs -0 rm 
+  find . -name "*.tif" -print0 | xargs -0 rm 
 
 
 move files:
@@ -12,8 +12,21 @@ find . -iname "*.tif"  | xargs -I {}  mv {} ~/akWorkOSX/processingTiffs
 
 create mp4 from processingTiffs
 
-ffmpeg -r 60 -f image2 -s 1280X720 -i screen-%04d.tif -vcodec libx264 -crf 25  -pix_fmt yuv420p test.mp4
+ffmpeg -r 60 -f image2 -s 1280X720 -i screen-%04d.tif -vcodec libx264 -crf 25  -pix_fmt yuv420p 0video.mp4
 
-ffmpeg -r 60 -f image2 -s 720X720 -i screen-%04d.tif -vcodec libx264 -crf 25 -pix_fmt yuv420p test.mp4
+ffmpeg -r 60 -f image2 -s 720X720 -i screen-%04d.tif -vcodec libx264 -crf 25 -pix_fmt yuv420p 0videoIG.mp4
 
 ffmpeg -framerate 60 -i iscreen-%04d.tif -c:v copy output.mp4
+
+
+
+
+
+RENAME files
+
+a=1
+for i in *.jpg; do
+new=$(printf "gface_%04d.jpg" "$a")
+mv -i -- "$i" "$new"
+let a=a+1
+done

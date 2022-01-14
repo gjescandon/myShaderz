@@ -11,6 +11,9 @@ precision mediump float;
 uniform vec2 iResolution;
 //uniform vec2 u_mouse;
 uniform float iTime;
+uniform float iRandom1;
+uniform float iRandom2;
+uniform float iRandom3;
 
 //uniform sampler2D texture;
 
@@ -122,13 +125,15 @@ void main( void )
 {
     
     vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
-    float h = 1.0;
-    float w = 3.0*h;
-    float ho = 0.1;
-    float wo = 0.2 * w;
+    float h = 0.6*(1.5+sin(0.1*iTime));
+    float w = 1.3*h;
+    float ho = 0.07;
+    float wo = 0.07 * w;
     vec2 ra = vec2(w,h) + vec2(wo, ho)*cos(0.2*iTime + vec2(0.0,PI_QRTR) + 0.0);
+    
     //float d = sdRhombus(p, ra);
-    float d = sdEllipse((p+vec2(0,0.8)), ra);
+    float d = sdEllipse((p+vec2(0.3*sin(0.5*iRandom1*iTime),0.5*cos(0.3*iRandom2*iTime))), ra);
+
     float noff = noiseValue(10.*(2+sin(0.1*iTime+PI_HALF))*p);
     vec3 col = vec3(1.0) - sign(d-0.3*noff)*vec3(1.0,1.0,1.0);
     //col -= vec3(d); // solo this for burning retina thing

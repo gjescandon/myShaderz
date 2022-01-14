@@ -18,6 +18,8 @@ uniform float iColorLimiter;
 
 uniform sampler2D texture01;
 uniform sampler2D texture02;
+uniform sampler2D texture03;
+uniform sampler2D texture04;
 
 
 float hash(float x, float y) {

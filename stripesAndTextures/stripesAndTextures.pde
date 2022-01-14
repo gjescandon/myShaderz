@@ -7,7 +7,7 @@ void setup() {
   size(1280, 720, P3D);
   noStroke();
   fill(204);
-  toon = loadShader("0gColorStripes.glsl"); // moving stripes
+  toon = loadShader("stripesAndTextures.glsl"); // moving stripes
   //toon = loadShader("0gGrids.glsl"); // wall of moving squares
   rr1 = random(1);
   rr2 = random(1);

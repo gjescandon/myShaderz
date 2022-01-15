@@ -49,8 +49,8 @@ vec2 renderDeformation( vec2 st ) {
     //u = r*cos(a+r); // H: rectangle s-curves
     //v = r*sin(a+r);
 
-    u = x/abs(y);  // I: horizontal stripes :: inifinity
-    v  = 1/abs(y);
+    //u = x/abs(y);  // I: horizontal stripes :: inifinity
+    //v  = 1/abs(y);
 
     return vec2(fract( u ),fract( v ));
 

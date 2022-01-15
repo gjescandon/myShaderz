@@ -1,10 +1,10 @@
 PShader toon;
 float rr1, rr2, rr3;
-PImage img;
+PImage img, img1, img2, img3, img4;
 float[] rarr;
 
 void setup() {
-  size(1280, 720, P3D);
+  size(720, 720, P3D);
   noStroke();
   fill(204);
   toon = loadShader("stripesAndTextures.glsl"); // moving stripes
@@ -12,9 +12,11 @@ void setup() {
   rr1 = random(1);
   rr2 = random(1);
   rr3 = random(1);
-  println(rr1);
-  println(rr2);
-  println(rr3);
+   img1 = loadImage("maewBucket01.jpg");
+   img2 = loadImage("gselfieOil.JPG");
+   img3 = loadImage("djivanGhost01.jpg");
+   img4 = loadImage("maskMutant.jpg");
+
   
 }
 
@@ -27,6 +29,10 @@ void draw() {
   toon.set("iRandom3", rr3);
   toon.set("iColorLimiter",1.0);
   toon.set("iFrame", frameCount);
+    toon.set("texture01", img1);
+    toon.set("texture02", img2);
+    toon.set("texture03", img4);
+    toon.set("texture04", img3);
   
   
   /*  *** FROM SHADER TOY
@@ -48,5 +54,5 @@ uniform samplerXX iChanneli;*/
   shader(toon);
 
   rect(0,0,width,height);
-  //saveFrame();
+  saveFrame();
 }

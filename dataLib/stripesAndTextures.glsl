@@ -16,6 +16,11 @@ uniform float iRandom1;
 uniform float iRandom2;
 uniform float iRandom3;
 
+uniform sampler2D texture01;
+uniform sampler2D texture02;
+uniform sampler2D texture03;
+uniform sampler2D texture04;
+
 
 //uniform sampler2D texture;
 
@@ -175,6 +180,22 @@ float sdEllipse( in vec2 p, in vec2 ab )
 }
 
 
+float ndot( vec2 a, vec2 b) {
+    return (a.x*b.x - a.y*b.y);
+}
+
+float sdRhombus( vec2 p, vec2 b) {
+  vec2 q = abs(p);
+  float h = clamp((-2.0*ndot(q,b)+ndot(b,b))/dot(b,b),-1.0,1.0);
+  float d = length( q - 0.5*b*vec2(1.0-h,1.0+h));
+  return d * sign(q.x*b.y + q.y*b.x - b.x*b.y);
+
+}
+
+vec3 colorClamp(vec3 color) {
+    return clamp(color, vec3(0.), vec3(1.));
+}
+
 void main( void )
 {
     
@@ -196,10 +217,107 @@ void main( void )
     rad -= 0.006*iTime;
 
     vec3 col = vec3(getColor(p.x));
-    col = vec3(getColor(fract(p.x*(1+0.4*sin(PI*p.y)) + 0.1*sin(PI*p.y+ 0.3*iTime ) + 0.01*iTime )));
+    col = vec3(getColor(fract(p.x*(1+0.4*sin(PI*p.y)) + 0.1*sin(PI*p.y+ 0.1*iTime ) + 0.01*iTime )));
     
 
     //textures
+
+    vec2 ra = 0.5 + 0.4*cos(0.5*iTime + vec2(0.0,1.57) + 0.0);
+    vec2 ra2 = 0.4 + 0.3*cos(0.5*iTime + vec2(0.0,1.57) + 0.0);
+
+    //p +=vec2(p.x*sin(0.25*iTime),p.y*cos(0.25*iTime));
+    vec2 p1 = p;
+    p1.x += 0.3*sin(0.1*iTime + noize3(0.05*iTime));
+    p1.y += 0.3*cos(0.1*iTime + noize3(0.1*iTime));
+    vec2 p2 = p;
+    p2.x += 0.3*sin(0.1*iTime + PI_HALF + noize3(0.1*iTime));
+    p2.y += 0.3*cos(0.1*iTime + PI_HALF + noize3(0.2*iTime));
+    vec2 p3 = p;
+    p3.x += 0.3*sin(0.1*iTime + 2.*PI_HALF + noize3(0.2*iTime));
+    p3.y += 0.3*cos(0.1*iTime + 2.*PI_HALF + noize3(0.3*iTime));
+    vec2 p4 = p;
+    p4.x += 0.3*sin(0.1*iTime + 3.*PI_HALF + noize3(0.3*iTime));
+    p4.y += 0.3*cos(0.1*iTime + 3.*PI_HALF + noize3(0.4*iTime));
+
+    float d = sdRhombus(p1, ra);
+    float d2 = sdRhombus(p2, ra2);
+    float d3 = sdRhombus(p3, ra);
+    float d4 = sdRhombus(p4, ra2);
+
+    vec3 col1 = clamp(10.*(vec3(1.0) - sign(d)), vec3(0.), vec3(1.));
+    vec3 col2 = clamp(10.*(vec3(1.0) - sign(d2)), vec3(0.), vec3(1.));
+    vec3 col3 = clamp(10.*(vec3(1.0) - sign(d3)), vec3(0.), vec3(1.));
+    vec3 col4 = colorClamp(10.*(vec3(1.0) - sign(d4)));
+
+    vec3 colCross12 = col1 * col2;
+    vec3 colCross13 = col1 * col3;
+    vec3 colCross14 = col1 * col4;
+    vec3 colCross23 = col2 * col3;
+    vec3 colCross24 = col2 * col4;
+    vec3 colCross34 = col3 * col4;
+    vec3 colCross123 = col1 * col2 * col3;
+    vec3 colCross124 = col1 * col2 * col4;
+    vec3 colCross134 = colCross12 * col3 * col4;
+    vec3 colCross234 = col3 * col2 * col4;
+
+    col1 = colorClamp(col1 - colCross12);    
+    col1 = colorClamp(col1 - colCross13);    
+    col1 = colorClamp(col1 - colCross14);    
+    col1 = colorClamp(col1 - colCross123);    
+    col1 = colorClamp(col1 - colCross134);    
+    col1 = colorClamp(col1 - colCross124);    
+
+    col *= (1 - col1);   
+
+    col3 = colorClamp(col3 - colCross23);    
+    col3 = colorClamp(col3 - colCross24);    
+    col3 = colorClamp(col3 - colCross34);    
+    col3 = colorClamp(col3 - colCross123);    
+    col3 = colorClamp(col3 - colCross134);    
+    col3 = colorClamp(col3 - colCross234);    
     
+    col *= (1 - col3);
+    //col1 = clamp(10.*(vec3(1.0) - sign(d)), vec3(0.), vec3(1.));
+
+    col2 = colorClamp(col2 - colCross12);    
+    col2 = colorClamp(col2 - colCross23);    
+    col2 = colorClamp(col2 - colCross24);    
+    col2 = colorClamp(col2 - colCross123);    
+    col2 = colorClamp(col2 - colCross124);    
+    col2 = colorClamp(col2 - colCross234);    
+    col *= (1 - col2);
+
+    col2 = clamp(10.*(vec3(1.0) - sign(d2)), vec3(0.), vec3(1.));
+    col2 = colorClamp(col2 - colCross24);    // reset here
+    
+    col4 = colorClamp(col4 - colCross14);    
+    col4 = colorClamp(col4 - colCross34);    
+    col4 = colorClamp(col4 - colCross24);    
+    col4 = colorClamp(col4 - colCross134);    
+    col4 = colorClamp(col4 - colCross124);    
+    col4 = colorClamp(col4 - colCross234);    
+    col *= (1 - col4);
+
+    col4 = colorClamp(10.*(vec3(1.0) - sign(d4))); //reset here
+
+
+    col1 *= texture2D(texture01, vec2(p1.x+0.5, (-1*p1.y+0.5))).xyz;
+    col1 = mix(col1, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d)));
+
+    // col -= vec3(d); // solo this for burning retina thing
+    //col *= 1.0 - exp(-2.0*abs(d));
+    //col *= 0.8 + 0.2*cos(140.0*d); // parallel lines
+
+
+    col2 *= texture2D(texture02, p2 + 0.5).xyz;
+    //col2 = mix(col2, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d2)));
+
+    col3 *= texture2D(texture03, p3 + 0.5).xyz;
+    col3 = mix(col3, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d3)));
+
+    col4 *= texture2D(texture04, vec2(p4.x + 0.5, -1.0*p4.y + 0.5)).xyz;
+    //col4 = mix(col, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d4)));
+    
+    col += (col1 + col2 + col3 + col4);
     gl_FragColor = vec4(col, 1.0);
 }

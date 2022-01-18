@@ -7,7 +7,7 @@ precision mediump float;
 #define PROCESSING_COLOR_SHADER
 #define PI 3.14159265359
 #define TWO_PI 6.28318530718 
-#define BPM 50
+#define BPM 94
 
 uniform vec2 u_resolution;
 uniform float u_time;

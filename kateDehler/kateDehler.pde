@@ -7,12 +7,14 @@ float rr1, rr2, rr3;
 PImage img;
 float[] rarr;
 float colorLimiter;
+float BPM = 124.;
 
 NoizeBob cb,zbob, xbob, ybob, swb;
 int cnt;
 void setup() {
-  size(1280, 720, P3D);
-  toon = loadShader("kateDehler01.glsl");
+  size(720, 720, P3D);
+  toon = loadShader("kateDehler02.glsl");
+  //toon = loadShader("sdBox.glsl");
   
   rr1 = random(1);
   rr2 = random(1);
@@ -47,6 +49,13 @@ void draw() {
   toon.set("iResolution", float(width), float(height));
   float tmilli = millis() / 1000.0;
   toon.set("iTime", tmilli);
+  println(tmilli);
+  if (frameCount % 100 == 0) {
+    rr1 = random(1);
+    rr2 = random(1);
+    rr3 = random(1);
+    println("BPM bump: " + frameCount);
+  }
   toon.set("iRandom1", rr1);
   toon.set("iRandom2", rr2);
   toon.set("iRandom3", rr3);
@@ -58,6 +67,6 @@ void draw() {
   rect(0,0,width,height);
   
   
-  println(frameCount);
+  //println(frameCount);
   //saveFrame();
 } 

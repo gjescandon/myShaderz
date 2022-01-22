@@ -11,6 +11,15 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
+uniform float iRandom1;
+uniform float iRandom2;
+uniform float iRandom3;
+
+uniform sampler2D texture01;
+//uniform sampler2D texture02;
+//uniform sampler2D texture03;
+//uniform sampler2D texture04;
+
 float trishapeOut(vec2 st, int N) {
   st = st *2.-1.;
   // N: Number of sides of your shape
@@ -135,32 +144,38 @@ void main() {
     /// quilez: value noize
     vec2 p = st;
 
+    float myTime = 15. + u_time;
 	  vec2 uv = p*vec2(u_resolution.x/u_resolution.y,1.0);
     float aspect = u_resolution.x/u_resolution.y;
 	  uv = 2.*uv - vec2(aspect,1.);
-    float theta = 0.1*u_time;
+    float theta = 0.1*myTime;
     
     // concentric circles
-    //uv = vec2(length(uv)*cos(theta),length(uv)*sin(theta));
+    uv = vec2(length(uv)*cos(theta),length(uv)*sin(theta));
   	float f = 0.0;
 
+    uv = 3.*uv;
+
     float r = length (uv);
-    float a = atan(uv.y * (0.5 + 0.4*cos(0.1*u_time))/abs(uv.x));
-    
+    float a = atan(uv.y * (0.5 + 0.4*cos(0.1*myTime))/abs(uv.x));
+    a = atan(uv.y * (0.5 + 0.1*myTime)/abs(uv.x));
 
 
 		//f = noiseValue( 10.0*vec2(r*a*(1+0.7*cos(u_time*0.4)),a) );
-    f = noiseValue( 10.0*vec2(r*a*(u_time*0.04),a) );
+    f = noiseValue( 10.0*vec2(r*a*(myTime*0.04),a) );
 
 
 	
 	  color = vec3(f);
 
-
-
-
+    vec2 p1 = 1.0*(p - vec2(0.5));
+    vec3 col1 = texture2D(texture01, vec2(p1.x+0.5, (-1*p1.y+0.5))).xyz;
+    
+    
+    if (length(col1) < length(color)) color = col1;
+    color = col1;
     // noise line demo
-    float xOff = 6.* st.x + u_time;
+    float xOff = 6.* st.x + myTime;
     float ptc = noize3(xOff);
     //color += vec3(1.- color0 - step(0.01, abs(ptc - st.y)));
     float fz = f * step(0.01, abs(ptc - st.y));

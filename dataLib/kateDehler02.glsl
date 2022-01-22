@@ -75,9 +75,14 @@ float noiseValue( in vec2 p )
 
 
 
-  vec3 getColorRGB(float t0 , float a1, float a2, float a3) {
-  float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
+
+
+  vec3 getColor(float t0, float offset) {
+   // **** RGB in here **** 
+  float a1 = 0.6; // red
+  float a2 = 0.5;  // green
+  float a3 = 0.7;  // blue
   
   float b1 = 0.4; //oscilators amplitude
   float b2 = 0.2;
@@ -91,58 +96,50 @@ float noiseValue( in vec2 p )
   float d1 = 0.; // offset
   float d2 = 0.3;
   float d3 = 0.6;
+  float factor = 1.0;
 
+  float tnom = t0-floor(t0);   // between 0.0 and 1.0
 
-  b1 = fract(100*iRandom1);
-  b2 = fract(100*iRandom2);
-  b3 = fract(100*iRandom3);
+  a1 = fract(10*iRandom1 * offset);
+  a2 = fract(10*iRandom2* offset);
+  a3 = fract(10*iRandom3* offset);
 
-  d1 = fract(1000*iRandom1);
-  d2 = fract(1000*iRandom2);
-  d3 = fract(1000*iRandom3);
+  b1 = fract(100*iRandom1* offset);
+  b2 = fract(100*iRandom2* offset);
+  b3 = fract(100*iRandom3* offset);
+
+  d1 = fract(1000*iRandom1* offset);
+  d2 = fract(1000*iRandom2* offset);
+  d3 = fract(1000*iRandom3* offset);
 
   
   float b1f = b1 * cos(TWO_PI*(c1*tnom+d1));
-  float red1 = clamp((a1 + b1f),0.,iColorLimiter);
+  float red1 = clamp(factor * (a1 + b1f),0.,1.);
   float b2f = b2 * cos(TWO_PI*(c2*tnom+d2));
-  float grn2 = clamp((a2 + b2f),0.,iColorLimiter);
+  float grn2 = clamp(factor * (a2 + b2f),0.,1.);
   float b3f = + b3 * cos(TWO_PI*(c3*tnom+d3));
-  float blu3 = clamp((a3 + b3f),0.,iColorLimiter);
+  float blu3 = clamp(factor * (a3 + b3f),0.,1.);
   vec3 c = vec3(red1,grn2,blu3);
   return c;   
  }
 
- vec3 getColor(float t0) {
-
-   // **** RGB in here **** 
-  float a1 = 0.6; // red
-  float a2 = 0.5;  // green
-  float a3 = 0.7;  // blue
-
-  a1 = 0.4 + clamp(fract(10*iRandom1),0.,0.6);
-  a2 = 0.4 + clamp(fract(10*iRandom3),0.,0.6);
-  a3 = 0.4 + clamp(fract(10*iRandom2),0.,0.6);
-
-  return getColorRGB(t0, a1, a2, a3);
+  vec3 getColor(float t0) {
+    return (getColor(t0, 1.));
   }
-
-  vec3 getColorGrn(float t0) {
-
-   // **** RGB in here **** 
-  float a1 = 0.6; // red
-  float a2 = 0.5;  // green
-  float a3 = 0.7;  // blue
-
-  a1 = 0.;
-  a2 = 0.7;
-  a3 = 0.;
-  return getColorRGB(t0, a1, a2, a3);
-  }
-
 
 float sdBox( in vec2 p, in vec2 b )
 {
     vec2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
+
+
+float sdBoxNoise( in vec2 p, in vec2 b )
+{
+  vec2 bn = vec2(b.x+0.3*random2(p)*sin((0.5*iTime)),b.y+0.3*random2(p)*cos((0.2*iTime)));
+  vec2 poff = (2.+iRandom3)*p + 0.1*iRandom2*iTime;
+  bn = vec2(b.x+0.3*noiseValue(poff),b.y+0.3*noiseValue(poff));
+    vec2 d = abs(p)-bn;
     return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
 }
 
@@ -217,6 +214,8 @@ float sdTriangle( in vec2 p, in vec2 p0, in vec2 p1, in vec2 p2 )
     return -sqrt(d.x)*sign(d.y);
 }
 
+
+
 float getExpandingCircle(vec2 p, float rad) {
   float cd = sdCircleNoize(p, rad);
   //cd = sdCircle(p, rad);
@@ -249,47 +248,53 @@ float expSustainedImpulse( float x, float f, float k )
     return min( x*x/(f*f), 1+(2.0/f)*s*exp(-k*s));
 }
 
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
+
+mat2 rotate2d(vec2 vi, vec2 vo){
+  float c = dot(vi, vo);// cos(_angle)
+  float s = length(cross(vec3(vi.x, vi.y, 0.), vec3(vo.x, vo.y, 0.))); // sin(_angle)
+    return mat2( c,-s,
+                s, c);
+}
+
+
 void main( void )
 {
     
   vec2 p = vec2(1.);
 	p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
+  vec2 p1 = p;
+  vec2 p2 = p;
+  vec2 p3 = p;
+  //TODO: ROTATE P
+  p1 = p * rotate2d(vec2(1.,0.), vec2(1.));
+  //p1.x -= 1.3;
+  p1.y += 2.2; //+ 0.1*sin(0.001*iTime);
+
+  p2 = p * rotate2d(vec2(1.,0.), vec2(1.));
+  //p1.x -= 1.3;
+  float p2off = 0.9+ 0.1*sin(0.001*iTime + iRandom2);
+  p2 += vec2(p2off, 0-p2off);
+
+  p3 = p * rotate2d(vec2(1.,0.), vec2(1.));
+  //p1.x -= 1.3;
+  p3 -= 0.9; // + 0.1*sin(0.001*iTime + iRandom3);
 
   float aspect = iResolution.x/iResolution.y;
 
-  vec3 col = vec3(1.);
-  float rad0 = 2.0;
-  rad0 = 10.0;
-  float rad = rad0 * expSustainedImpulse(0.03 * (iTime+100*iRandom2), 3.0, 3.0);
+  vec3 col = vec3(.0);
   
-  
-  float radOff = 0.6;
-  float iMax = 18.;
-  float coff = (iMax-1)/iMax;
-
-  float cd = getExpandingCircle(p, rad);
-  col = (1-smoothstep(0.,0.01,cd))*getColor(sin(0.01*iTime)+coff+0.03*random(p));
-
-  for (int i = 1; i < iMax; i ++) {
-    if (rad-radOff*(i-1) > 0.05) {
-      float rrad = rad-i*radOff;
-      
-        col -= step(0.1,getExpandingCircle(p, rad)*getExpandingCircle(p, rrad));
-      float cdd = getExpandingCircle(p, rrad);
-      //if (i % 2 == 0) {
-        col += (1-smoothstep(0.,0.01,cdd))*getColor(sin(0.01*iTime)+(i+1)+coff+0.03*random(p));
-      //}
-    }
-  }
-
-  // frame
-  float frm = sdBox(p,vec2(1.4, 0.8));
-  
-  if (abs(frm) < 0.07) {
-    col = mix(vec3(0.0), getColorGrn(0.003*iTime), 1.0-smoothstep(0.0,0.1,abs(frm)) ); // stroke
-  }
-  
-  //col = mix( getColor(0.03*iTime), vec3(1.0), 1.0-smoothstep(0.0,0.01,abs(cd)) ); // stroke
+  float sdt1 = sdBoxNoise(p1, vec2(2.1));
+  float sdt2 = sdBoxNoise(p2, vec2(1.2));
+  float sdt3 = sdBoxNoise(p3, vec2(1.2));
+  col += fract((1.-sign(sdt1))*getColor(iRandom3 + 0.03*random2(p) + 0.3*sin(0.1*iTime), iRandom3));
+  //sdt = sdTriangle(p, vec2(0.), vec2(1.3,1.3), vec2(1.3, -1.3)); // sdt2
+  col += fract((1.-sign(sdt2))*getColor(iRandom1 + 0.03*random2(p) + 0.3*sin(0.1*iTime+ iRandom1), iRandom1));
+  //sdt = sdTriangle(p, vec2(0.), vec2(-1.3,1.3), vec2(1.3, 1.3)); // sdt2
+  col += fract((1.-sign(sdt3))*getColor(iRandom2 + 0.03*random2(p) + 0.3*sin(0.1*iTime+ iRandom2), iRandom2));
   gl_FragColor = vec4(col, 1.0);
 
 }

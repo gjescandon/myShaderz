@@ -51,20 +51,21 @@ void main( void )
     
     vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/iResolution.y;
     float it = 0.5 * iTime;
-    p.x += 0.8 * cos(0.5* it + 0.0);
+    //p.x += 0.8 * cos(0.5* it + 0.0);
     
     float power = 2.;
     float step = 1.;// + 5. * abs(sin(0.3*u_time));
-    p.y -= expStep( p.x, step, power );    
+    //p.y -= expStep( p.x, step, power );    
     
     float ySide = 0.4 + 0.3*cos(it + 0.0);
     float xSide = 1/ySide;
     vec2 ra = vec2(0.1, ySide);
     float d = sdBox(p, ra);
     vec3 col = vec3(1.0) - sign(d)*vec3(0.1,0.4,0.7);
-    // col -= vec3(d); // solo this for burning retina thing
-    col *= 1.0 - exp(-2.0*abs(d));
-    col *= 0.8 + 0.2*cos(140.0*d);
+    //col = sign(d)*vec3(0.1,0.4,0.7);
+     col -= vec3(d); // solo this for burning retina thing
+    //col *= 1.0 - exp(-2.0*abs(d));
+    //col *= 0.8 + 0.2*cos(140.0*d);
     col = mix(col, vec3(1.0), 1.0-smoothstep(0.0, 0.02, abs(d)));
     gl_FragColor = vec4(col, 1.0);
 }

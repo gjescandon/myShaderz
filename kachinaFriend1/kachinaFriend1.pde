@@ -6,7 +6,8 @@ void setup() {
   size(720, 720, P3D);
   noStroke();
   fill(204);
-  toon = loadShader("kachinaFriend1.glsl");
+  //toon = loadShader("kachinaFriend1.glsl");
+  toon = loadShader("kachinaFriend2.glsl");
 }
 
 void draw() {

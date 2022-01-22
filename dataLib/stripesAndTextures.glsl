@@ -266,8 +266,8 @@ void main( void )
     col1 = colorClamp(col1 - colCross123);    
     col1 = colorClamp(col1 - colCross134);    
     col1 = colorClamp(col1 - colCross124);    
+    //col1 = clamp(10.*(vec3(1.0) - sign(d)), vec3(0.), vec3(1.));
 
-    col *= (1 - col1);   
 
     col3 = colorClamp(col3 - colCross23);    
     col3 = colorClamp(col3 - colCross24);    
@@ -275,30 +275,33 @@ void main( void )
     col3 = colorClamp(col3 - colCross123);    
     col3 = colorClamp(col3 - colCross134);    
     col3 = colorClamp(col3 - colCross234);    
-    
-    col *= (1 - col3);
-    //col1 = clamp(10.*(vec3(1.0) - sign(d)), vec3(0.), vec3(1.));
+    //col3 = clamp(10.*(vec3(1.0) - sign(d3)), vec3(0.), vec3(1.));
 
+    
     col2 = colorClamp(col2 - colCross12);    
     col2 = colorClamp(col2 - colCross23);    
     col2 = colorClamp(col2 - colCross24);    
     col2 = colorClamp(col2 - colCross123);    
     col2 = colorClamp(col2 - colCross124);    
     col2 = colorClamp(col2 - colCross234);    
-    col *= (1 - col2);
 
     col2 = clamp(10.*(vec3(1.0) - sign(d2)), vec3(0.), vec3(1.));
-    col2 = colorClamp(col2 - colCross24);    // reset here
+    //col2 = colorClamp(col2 - colCross24);    // reset here
     
     col4 = colorClamp(col4 - colCross14);    
     col4 = colorClamp(col4 - colCross34);    
     col4 = colorClamp(col4 - colCross24);    
     col4 = colorClamp(col4 - colCross134);    
     col4 = colorClamp(col4 - colCross124);    
-    col4 = colorClamp(col4 - colCross234);    
-    col *= (1 - col4);
+    col4 = colorClamp(col4 - colCross234);  
 
     col4 = colorClamp(10.*(vec3(1.0) - sign(d4))); //reset here
+
+    col *= (1 - col2);
+    col *= (1 - col4);
+    col *= (1 - col3);
+    col *= (1 - col1);   
+    
 
 
     col1 *= texture2D(texture01, vec2(p1.x+0.5, (-1*p1.y+0.5))).xyz;
@@ -309,14 +312,14 @@ void main( void )
     //col *= 0.8 + 0.2*cos(140.0*d); // parallel lines
 
 
-    col2 *= texture2D(texture02, p2 + 0.5).xyz;
-    //col2 = mix(col2, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d2)));
+    col2 *= texture2D(texture02, vec2(p2.x + 0.5, -1*p2.y + 0.5)).xyz;
+    col2 = mix(col2, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d2)));
 
-    col3 *= texture2D(texture03, p3 + 0.5).xyz;
+    col3 *= texture2D(texture03, vec2(p3.x + 0.5, -1*p3.y + 0.5)).xyz;
     col3 = mix(col3, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d3)));
 
-    col4 *= texture2D(texture04, vec2(p4.x + 0.5, -1.0*p4.y + 0.5)).xyz;
-    //col4 = mix(col, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d4)));
+    col4 *= texture2D(texture04, vec2(p4.x + 0.5, -1*p4.y + 0.5)).xyz;
+    col4 = mix(col4, vec3(0.3), 1.0-smoothstep(0.0, 0.02, abs(d4)));
     
     col += (col1 + col2 + col3 + col4);
     gl_FragColor = vec4(col, 1.0);

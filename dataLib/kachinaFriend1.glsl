@@ -249,8 +249,8 @@ void main() {
     vec2 pm = vec2(p.x, 1.3*p.y + 0.45);
     //pm  += vec2(-.4+ 0.01*noise(p), -.3+ 0.01*noise(p));
     // gain on x
-    float gain = 2.;
-    pm.x = 0.06*gain(pm.x, gain);
+    float gainX = 2.;
+    pm.x = 0.06*gain(pm.x, gainX);
     pm.y += 1.35*abs(pm.y)*sin(1.5*pm.x * PI + 0.5*PI);
 
     float rm = length (pm) + 0.1*noise(pm)*(0.4+ 0.5*abs(sin(0.2*u_time)));

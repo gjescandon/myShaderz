@@ -8,7 +8,7 @@ void setup() {
   size(720, 720, P3D);
   noStroke();
   fill(204);
-  img1 = loadImage("martin00028_L.png");
+  img1 = loadImage("catApril01.png");
   
   
   // Inigo Quilez
@@ -74,5 +74,5 @@ void draw() {
   shader(toon);
 
   
-  //saveFrame();
+  saveFrame();
 }

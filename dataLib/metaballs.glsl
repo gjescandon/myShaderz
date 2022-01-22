@@ -28,7 +28,7 @@
 */
 
 #define AA 2
-#define numballs 8
+#define numballs 7
 uniform vec2 iResolution;
 uniform vec2 iMouse;
 uniform float iTime;
@@ -54,6 +54,25 @@ vec2 hash2( float n )
 vec3 hash3( float n )
 {
     return fract(sin(vec3(n,n+1.0,n+2.0))*vec3(43758.5453123,22578.1459123,19642.3490423));
+}
+
+float hash(vec2 p)  // replace this by something better
+{
+    p  = 50.0*fract( p*0.3183099 + vec2(0.71,0.113));
+    return -1.0+2.0*fract( p.x*p.y*(p.x+p.y) );
+}
+
+float noiseValue( in vec2 p )
+{
+    vec2 i = floor( p );
+    vec2 f = fract( p );
+	
+	vec2 u = f*f*(3.0-2.0*f);
+
+    return mix( mix( hash( i + vec2(0.0,0.0) ), 
+                     hash( i + vec2(1.0,0.0) ), u.x),
+                mix( hash( i + vec2(0.0,1.0) ), 
+                     hash( i + vec2(1.0,1.0) ), u.x), u.y);
 }
 
 //----------------------------------------------------------------
@@ -157,6 +176,12 @@ vec3 calcNormal( in vec3 pos )
            map(pos+eps.yyx) - map(pos-eps.yyx) ) );
 }
 
+float integralSmoothstep( float x, float T )
+{
+    if( x>T ) return x - T/2.0;
+    return x*x*x*(1.0-x*0.5/T)/T/T;
+}
+
 void main( void )
 {
     //-----------------------------------------------------
@@ -187,6 +212,35 @@ void main( void )
     #endif
 
     */		
+    /// quilez: value noize
+    vec3 bckgnd = vec3(0.);
+    vec2 p = q;
+
+    float myTime = 15. + iTime;
+	  vec2 uv = p*vec2(iResolution.x/iResolution.y,1.0);
+    float aspect = iResolution.x/iResolution.y;
+	  uv = 2.*uv - vec2(aspect,1.);
+    float theta = 0.1*myTime;
+
+    uv.x = integralSmoothstep(abs(0.6*uv.x), 0.3);
+    
+    // concentric circles
+    uv = vec2(length(uv)*cos(theta),length(uv)*sin(theta));
+  	float f = 0.0;
+
+    uv = 3.*uv;
+
+    float r = length (uv);
+    float a = atan(uv.y * (0.5 + 0.4*cos(0.1*myTime))/abs(uv.x));
+    a = atan(uv.y * (0.5 + 0.1*myTime)/abs(uv.x));
+
+
+		//f = noiseValue( 10.0*vec2(r*a*(1+0.7*cos(u_time*0.4)),a) );
+    f = noiseValue( 10.0*vec2(r*a*(myTime*0.04),a) );
+
+
+	
+	bckgnd = vec3(f);
   
 for( int ax=0; ax<AA; ax++ )
 	for( int ay=0; ay<AA; ay++ )
@@ -209,7 +263,8 @@ for( int ax=0; ax<AA; ax++ )
 		}
 
         // move camera		
-		float an = 0.5*time - 6.2831*(m.x-0.5);
+		float an = 0.5*time - 6.2831*(m.x-0.5); /// m is a mouse function
+        an *= 0.1;
 		vec3 ro = vec3(5.0*sin(an),2.5*cos(0.4*an),5.0*cos(an));
         vec3 ta = vec3(0.0,0.0,0.0);
 
@@ -241,7 +296,7 @@ for( int ax=0; ax<AA; ax++ )
 
         // background
 	    vec3 col = pow( texture2D( iTexture01, rd.xy ).xyz, vec3(2.2) );
-		
+		vec3 col1 = texture2D( iTexture01, p ).xyz;
 	    // raymarch
         vec2 tmat = intersect(ro,rd);
         if( tmat.y>-0.5 )
@@ -274,7 +329,9 @@ for( int ax=0; ax<AA; ax++ )
     		vec3 lin = vec3(0.0);
 			lin += mix( vec3(0.05,0.02,0.0), 1.2*vec3(0.8,0.9,1.0), 0.5 + 0.5*nor.y );
             lin *= 1.0 + 1.5*vec3(0.7,0.5,0.3)*pow( clamp( 1.0 + dot(nor,rd), 0.0, 1.0 ), 2.0 );
-    		lin += 1.5*clamp(0.3+2.0*nor.y,0.0,1.0)*pow(texture2D( iTexture01, ref.xy ).xyz,vec3(2.2))*(0.04+0.96*pow( clamp( 1.0 + dot(nor,rd), 0.0, 1.0 ), 4.0 ));
+
+    		//lin += 1.5*clamp(0.3+2.0*nor.y,0.0,1.0)*pow(texture2D( iTexture01, ref.xy ).xyz,vec3(2.2))*(0.04+0.96*pow( clamp( 1.0 + dot(nor,rd), 0.0, 1.0 ), 4.0 ));
+            //lin += 1.5*clamp(0.3+2.0*nor.y,0.0,1.0)*pow(bckgnd.xyz,vec3(2.2))*(0.04+0.96*pow( clamp( 1.0 + dot(nor,rd), 0.0, 1.0 ), 4.0 ));
 
 	    	// surface-light interacion
     		col = lin * mate;
@@ -284,8 +341,9 @@ for( int ax=0; ax<AA; ax++ )
 		tot += col;
 	}
 	tot /= float(AA*AA);
-
-	//-----------------------------------------------------
+    tot += bckgnd * (1-step(vec3(0.1), tot));
+    
+    //-----------------------------------------------------
 	// postprocessing
     //-----------------------------------------------------
 

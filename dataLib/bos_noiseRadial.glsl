@@ -134,7 +134,11 @@ float noiseGradient( in vec2 p )
                      dot( hashGradient( i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
 }
 
-
+float integralSmoothstep( float x, float T )
+{
+    if( x>T ) return x - T/2.0;
+    return x*x*x*(1.0-x*0.5/T)/T/T;
+}
 
 void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
@@ -149,6 +153,8 @@ void main() {
     float aspect = u_resolution.x/u_resolution.y;
 	  uv = 2.*uv - vec2(aspect,1.);
     float theta = 0.1*myTime;
+
+    uv.x = integralSmoothstep(abs(0.6*uv.x), 0.3);
     
     // concentric circles
     uv = vec2(length(uv)*cos(theta),length(uv)*sin(theta));
@@ -172,8 +178,8 @@ void main() {
     vec3 col1 = texture2D(texture01, vec2(p1.x+0.5, (-1*p1.y+0.5))).xyz;
     
     
-    if (length(col1) < length(color)) color = col1;
-    color = col1;
+    //if (length(col1) < length(color)) color = col1;
+    //color = col1;
     // noise line demo
     float xOff = 6.* st.x + myTime;
     float ptc = noize3(xOff);
